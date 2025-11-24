@@ -8,7 +8,7 @@ export default function Login() {
         <Stack sx={{ width: '100vw' }} alignItems={'center'} justifyContent={'center'} height={'100vh'}>
             <Stack
                 sx={{ backgroundColor: "white", p: 6, m: 4, width: "30vw", borderRadius: 5, boxShadow: "5px 5px 10px #ccc" }}
-                spacing={5}
+                spacing={4}
                 alignItems={'center'}
                 justifyContent={'center'}>
                 <Typography variant='h4' sx={{ fontSize: "24px", fontWeight: '700' }}>Admin Login</Typography>
