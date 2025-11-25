@@ -25,7 +25,7 @@ export default function Login() {
         // clear error message with user clear input
 
         if (e.target.value.trim() === "") {
-            
+
             setForm({ ...form, [e.target.name]: e.target.value });
 
             const newErrors = { ...error };
@@ -37,21 +37,23 @@ export default function Login() {
             // No Validation
             return;
         }
-
+        
         setForm({ ...form, [e.target.name]: e.target.value });
 
-        const result = loginSchema.safeParse(form);
+        const updatedField = {[e.target.name]: e.target.value };
+
+        const result = loginSchema.safeParse(updatedField);
 
         if (!result.success) {
-            // console.log(result.error.flatten().fieldErrors);
-            setError(result.error.flatten().fieldErrors);
+            setError(result.error.flatten().fieldErrors); // show error messages
             return;
         }
 
+        setError({}); //  clear error if validation passes
 
     }
 
-    // console.log(error);
+    console.log(loginSchema.safeParse({ password: "nfbwehjgfrh1" }));
 
     const handleSubmit = async (e) => {
 
