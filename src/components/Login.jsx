@@ -37,10 +37,10 @@ export default function Login() {
             // No Validation
             return;
         }
-        
+
         setForm({ ...form, [e.target.name]: e.target.value });
 
-        const updatedField = {[e.target.name]: e.target.value };
+        const updatedField = { [e.target.name]: e.target.value };
 
         const result = loginSchema.safeParse(updatedField);
 
@@ -85,9 +85,9 @@ export default function Login() {
 
 
     return (
-        <Stack sx={{ width: '100vw' }} alignItems={'center'} justifyContent={'center'} height={'100vh'}>
+        <Stack sx={{ width: '90vw' }} alignItems={'center'} justifyContent={'center'} height={'90vh'}>
             <Stack
-                sx={{ backgroundColor: "white", p: 6, m: 4, width: "30vw", borderRadius: 5, boxShadow: "5px 5px 10px #ccc" }}
+                sx={{ backgroundColor: "white", p: 6, width: "30vw", borderRadius: 5, boxShadow: "5px 5px 10px #ccc" }}
                 spacing={4}
                 alignItems={'center'}
                 justifyContent={'center'}>
