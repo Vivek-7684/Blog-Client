@@ -1,17 +1,34 @@
 import Login from './components/Login.jsx';
-import Blog from './components/Blogs.jsx';
 import Home from './components/Home.jsx';
+import { GlobalStyles } from '@mui/material';
 import Layout from './components/layout/layout.jsx';
 import { Routes, Route } from 'react-router-dom';
+import AddBlog from './components/AddBlog.jsx';
+import ViewBlog from './components/ViewBlog.jsx';
+import AdminPanel from './components/AdminPanel.jsx';
 
 export default function App() {
     return (
-        <Routes>
-            <Route path='/' element={<Layout />}>
-                <Route index element={<Home />} />
-                <Route path='/login' element={<Login />} />
-                <Route path='/blogs' element={<Blog />} />
-            </Route>
-        </Routes>
+        <>
+            <GlobalStyles
+                styles={{
+                    "*": {
+                        margin: 0,
+                        padding: 0
+                    }
+                }}
+            />
+            <Routes>
+
+                <Route path='/' element={<Layout />}>
+                    <Route index element={<Home />} />
+                    <Route path='/Login' element={<Login />} />
+                    <Route path="Admin" element={<AdminPanel />}>
+                        <Route path="Add-Blog" element={<AddBlog />} />
+                        <Route path="View-Blog" element={<ViewBlog />} />
+                    </Route>
+                </Route>
+            </Routes>
+        </>
     );
 }
