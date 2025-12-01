@@ -23,7 +23,7 @@ export default function App() {
                 <Route path='/' element={<Layout />}>
                     <Route index element={<Home />} />
                     <Route path='/Login' element={<Login />} />
-                    <Route path="Admin" element={<AdminPanel />}>
+                    <Route path="/Admin" element={<AdminPanel />}>
                         <Route path="Add-Blog" element={<AddBlog />} />
                         <Route path="View-Blog" element={<ViewBlog />} />
                     </Route>

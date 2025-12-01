@@ -2,9 +2,11 @@ import Stack from '@mui/material/Stack';
 import TextFeid from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
 import { loginSchema } from '../validation';
 import { api } from '../api/api';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
 
@@ -14,8 +16,10 @@ export default function Login() {
 
     const [error, setError] = useState({});
 
+    const navigate = useNavigate();
+
     const handleChange = (e) => {
-        console.log(e.target.value);
+
         // clear blank space
         if (e.target.value.trimStart() === "") {
             e.target.value = "";
@@ -37,6 +41,7 @@ export default function Login() {
             return;
         }
 
+        // update form state
         setForm({ ...form, [e.target.name]: e.target.value });
 
         const updatedField = { [e.target.name]: e.target.value };
@@ -52,8 +57,6 @@ export default function Login() {
 
     }
 
-    console.log(loginSchema.safeParse({ password: "nfbwehjgfrh1" }));
-
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -65,16 +68,21 @@ export default function Login() {
                 setTimeout(() => {
                     setAlert({ open: false, severity: "", message: "" });
                 }, 3000);
+
+                setTimeout(() => {
+                    navigate("/Admin")
+                }, 3000);
             })
             .catch((err) => {
                 let messages = [];
-                if (Array.isArray(err.response?.data?.message)) {
-                    messages = err.response?.data?.message.map((msg) => msg);
+                if (Array.isArray(err.response?.data?.error)) {
+                    messages = err.response?.data?.error.map((msg) => msg);
                 }
-                else if (err.response?.data?.message) {
-                    messages.push(err.response?.data?.message);
+                else if (err.response?.data?.error) {
+                    messages.push(err.response?.data?.error);
                 }
-                setAlert({ open: true, severity: "error", message: "Login Failed" });
+                
+                setAlert({ open: true, severity: "error", message: messages });
 
                 setTimeout(() => {
                     setAlert({ open: false, severity: "", message: "" });
@@ -82,18 +90,29 @@ export default function Login() {
             })
     }
 
-
     return (
         <Stack sx={{ width: '90vw' }} alignItems={'center'} justifyContent={'center'} height={'90vh'}>
             <Stack
-                sx={{ backgroundColor: "white", p: 6, width: "30vw", borderRadius: 5, boxShadow: "5px 5px 10px #ccc" }}
+                sx={{ backgroundColor: "white", p: 6, width: "30vw", borderRadius: 5, boxShadow: "7px 7px 20px #ccc" }}
                 spacing={4}
                 alignItems={'center'}
                 justifyContent={'center'}>
+                {alert.open &&
+                    (
+                        <Alert
+                            severity={alert.severity}
+                            sx={{ m: 2, width: "40vw", position: "fixed", zIndex: 20, top: 70, left: '50' }}
+                            onClose={() => setAlert({ open: false, severity: "", messages: "" })}
+                        >
+                            {alert.message}
+                        </Alert>
+                    )
+                }
+
                 <Typography variant='h4' sx={{ fontSize: "24px", fontWeight: '700' }}>Admin Login</Typography>
-                <TextFeid label="Email" error={error?.email?.join()} value={form?.email || ""} helperText={error?.email?.join(".")} name="email" fullWidth variant="outlined" type="email" onChange={handleChange} />
+                <TextFeid label="Email" error={error?.email?.join()} value={form?.email || ""} helperText={error?.email?.join(".")} name="email" fullWidth variant="outlined" type="text" onChange={(e) => handleChange(e)} />
                 <TextFeid label="Password" error={error?.password?.join()} value={form?.password || ""} helperText={error?.password?.join(".")} name="password" fullWidth type="password" variant="outlined" onChange={handleChange} />
-                <Button type="submit" sx={{ width: "100%" }} onClick={() => handleSubmit()} variant='contained'>Login</Button>
+                <Button disabled={Object.keys(error).length !== 0 ? true : false} type="submit" sx={{ width: "100%" }} onClick={(e) => handleSubmit(e)} variant='contained'>Login</Button>
             </Stack>
         </Stack>
     );
