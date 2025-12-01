@@ -71,7 +71,7 @@ export default function Login() {
 
                 setTimeout(() => {
                     navigate("/Admin")
-                }, 3000);
+                }, 2000);
             })
             .catch((err) => {
                 let messages = [];

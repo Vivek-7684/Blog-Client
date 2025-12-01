@@ -13,7 +13,7 @@ export default function Form() {
 
   const Navigate = useNavigate();
 
-  const [filter, setFilter] = useState({}); // form data
+  const [form, setForm] = useState({}); // form data
   const [error, setError] = useState({}); // real time error
 
   const [alert, setAlert] = useState({  // alert messages
@@ -22,39 +22,39 @@ export default function Form() {
     messages: []
   });
 
-  // const handleChange = (e) => {
+  const handleChange = (e) => {
 
-  //     // validation only when user type data 
-  //     if (e.target.value.trimStart() === "") {
-  //         e.target.value = "";
-  //     }
+    // validation only when user type data 
+    if (e.target.value.trimStart() === "") {
+      e.target.value = "";
+    }
 
-  //     if (e.target.value.trim() === "") {
-  //         setFilter({ ...filter, [e.target.name]: "" });
+    if (e.target.value.trim() === "") {
+      setForm({ ...form, [e.target.name]: "" });
 
-  //         const newErrors = { ...error };
-  //         delete newErrors[e.target.name]; //remove only that field error
-  //         setError(newErrors);
+      const newErrors = { ...error };
+      delete newErrors[e.target.name]; //remove only that field error
+      setError(newErrors);
 
-  //         return; //  no validation for empty 
-  //     }
+      return; //  no validation for empty 
+    }
 
-  //     const updatedFields = { ...filter, [e.target.name]: e.target.value };
-  //     setFilter(updatedFields);
+    const updatedFields = { ...form, [e.target.name]: e.target.value };
+    setForm(updatedFields);
 
-  //     const result = productSchemaForFilter.safeParse(updatedFields);
+    // const result = productSchemaForFilter.safeParse(updatedFields);
 
-  //     if (!result.success) {
-  //         setError(result.error.flatten().fieldErrors);
-  //     } else {
-  //         setError({});
-  //     }
-  // };
+    // if (!result.success) {
+    //     setError(result.error.flatten().fieldErrors);
+    // } else {
+    //     setError({});
+    // }
+  };
 
 
   const handleAdd = () => {
     console.log("A");
-    api.post("/AddProduct", filter)
+    api.post("/AddProduct", form)
       .then(() => {
         setAlert({
           show: true,
@@ -108,48 +108,49 @@ export default function Form() {
             </Alert>
           ))
         }
-        <form>
+        <form style={{ height: '80vh' }}>
           <Typography variant='h5'>Blogs </Typography>
 
           <TextField
             error={error?.title}
             helperText={error?.title?.join(".")}
-            value={filter?.name || ""}
-            label="name"
-            name="name"
+            value={form?.title || ""}
+            label="Title"
+            name="Title"
             margin="normal"
-            // onChange={handleChange}
+            onChange={handleChange}
             variant='outlined'
+            fullWidth
+          />
+          
+          <TextField
+            error={error?.content}
+            helperText={error?.content?.join(".")}
+            value={form?.content || ""}
+            label="Content"
+            name="Content"
+            margin="normal"
+            onChange={handleChange}
+            variant='outlined'
+            rows={6}
+            multiline
+            fullWidth
+          />
+
+          <TextField
+            error={error?.image}
+            helperText={error?.image?.join(".")}
+            value={form?.image || ""}
+            name="Image"
+            margin="normal"
+            onChange={handleChange}
+            variant='outlined'
+            rows={6}
+            type="file"
             fullWidth
           />
 
           {/* <TextField
-            error={error?.maxPrice}
-            helperText={error?.maxPrice?.join(".")}
-            value={filter?.maxPrice || ""}
-            type='number'
-            name="maxPrice"
-            label="MaxPrice"
-            margin="normal"
-            // onChange={handleChange}
-            variant='outlined'
-            fullWidth
-          /> */}
-
-          {/* <TextField
-            error={error?.minPrice}
-            helperText={error?.minPrice?.join(".")}
-            value={filter?.minPrice || ""}
-            type='number'
-            name="minPrice"
-            label="MinPrice"
-            margin="normal"
-            // onChange={handleChange}
-            variant='outlined'
-            fullWidth
-          /> */}
-
-          <TextField
             error={error?.category}
             helperText={error?.category?.join(".")}
             value={filter?.category || ""}
@@ -158,14 +159,14 @@ export default function Form() {
             name="category"
             margin="normal"
             variant='outlined'
-            // onChange={handleChange}
+            onChange={handleChange}
             fullWidth
           >
             <MenuItem value="Technologies">Technologies</MenuItem>
             <MenuItem value="Food">Food</MenuItem>
             <MenuItem value="News">News</MenuItem>
             <MenuItem value="Politics">Politics</MenuItem>
-          </TextField>
+          </TextField> */}
 
           <Button disabled={Object.keys(error).length > 0} fullWidth sx={{ p: 2, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }} variant='contained'>Add Blog</Button>
         </form>
