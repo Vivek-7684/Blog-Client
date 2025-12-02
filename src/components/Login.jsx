@@ -70,7 +70,7 @@ export default function Login() {
                 }, 3000);
 
                 setTimeout(() => {
-                    navigate("/Admin")
+                    navigate("/admin/add-blog")
                 }, 2000);
             })
             .catch((err) => {

@@ -1,13 +1,11 @@
 import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
-// import { productSchemaForFilter } from '../validation.js';
-import { Stack, Alert } from '@mui/material';
-// import { Product } from './Product.jsx';
+import { blogSchema } from '../validation.js';
+import { Alert } from '@mui/material';
 
 export default function Form() {
 
@@ -40,26 +38,31 @@ export default function Form() {
     }
 
     const updatedFields = { ...form, [e.target.name]: e.target.value };
+
+    console.log(updatedFields);
+
     setForm(updatedFields);
 
-    // const result = productSchemaForFilter.safeParse(updatedFields);
+    const result = blogSchema.safeParse(updatedFields);
 
-    // if (!result.success) {
-    //     setError(result.error.flatten().fieldErrors);
-    // } else {
-    //     setError({});
-    // }
+    console.log(result);
+
+    if (!result.success) {
+      setError(result.error.flatten().fieldErrors);
+    } else {
+      setError({});
+    }
   };
 
 
-  const handleAdd = () => {
-    console.log("A");
-    api.post("/AddProduct", form)
+
+  const AddBlog = () => {
+    api.post("/addBlog", form)
       .then(() => {
         setAlert({
           show: true,
           type: "success",
-          messages: ["Product added successfully"]
+          messages: ["Blog added successfully"]
         });
 
         setTimeout(() => {
@@ -87,10 +90,10 @@ export default function Form() {
           setAlert({ show: false, type: "", messages: [] });
         }, 3000);
 
-
       });
   };
 
+  console.log(error);
 
   return (
     <>
@@ -116,19 +119,19 @@ export default function Form() {
             helperText={error?.title?.join(".")}
             value={form?.title || ""}
             label="Title"
-            name="Title"
+            name="title"
             margin="normal"
             onChange={handleChange}
             variant='outlined'
             fullWidth
           />
-          
+
           <TextField
             error={error?.content}
             helperText={error?.content?.join(".")}
             value={form?.content || ""}
             label="Content"
-            name="Content"
+            name="content"
             margin="normal"
             onChange={handleChange}
             variant='outlined'
@@ -138,9 +141,9 @@ export default function Form() {
           />
 
           <TextField
-            error={error?.image}
-            helperText={error?.image?.join(".")}
-            value={form?.image || ""}
+            error={error?.Image}
+            helperText={error?.Image?.join(".")}
+            value={form?.Image || ""}
             name="Image"
             margin="normal"
             onChange={handleChange}
