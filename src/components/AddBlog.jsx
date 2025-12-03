@@ -51,10 +51,33 @@ export default function Form() {
     }
   };
 
+  const AddBlog = (e) => {
 
+    e.preventDefault();
 
-  const AddBlog = () => {
-    api.post("/addBlog", form)
+    const { title, content, image } = e.target;
+
+    if (!title || !content || !image) {
+      setAlert({
+        show: true,
+        type: "error",
+        messages: ["All Fields are Required."]
+      })
+      setTimeout(() => {
+        setAlert({
+          show: false,
+          type: "",
+          messages: []
+        })
+      }, 2000);
+      return false;
+    }
+
+    const fd = new FormData();
+
+    for (let key in form) fd.append(key, form[key]);
+
+    api.post("/addBlog", fd)
       .then(() => {
         setAlert({
           show: true,
@@ -64,7 +87,6 @@ export default function Form() {
 
         setTimeout(() => {
           setAlert({ show: false, type: "", messages: [] });
-          Navigate(0);
         }, 3000);
       })
       .catch((err) => {
@@ -91,24 +113,24 @@ export default function Form() {
   };
 
   const handleUpload = (e) => {
-  const file = e.target.files[0];
-  const name = e.target.name; // "Image"
+    const file = e.target.files[0];
+    const name = e.target.name; // "Image"
 
-  // user removed file
-  if (!file) {
-    setError({ ...error, [name]: ["Image is required"] });
-    setForm({ ...form, [name]: "" });
-    return;
-  }
+    // user removed file
+    if (!file) {
+      setError({ ...error, [name]: ["Image is required"] });
+      setForm({ ...form, [name]: "" });
+      return;
+    }
 
-  // store file in state
-  setForm({ ...form, [name]: file });
+    // store file in state
+    setForm({ ...form, [name]: file });
 
-  // remove error if upload
-  const newErrors = { ...error };
-  delete newErrors[name];
-  setError(newErrors);
-};
+    // remove error if upload
+    const newErrors = { ...error };
+    delete newErrors[name];
+    setError(newErrors);
+  };
 
 
   return (
@@ -120,7 +142,7 @@ export default function Form() {
             <Alert
               key={idx}
               severity={alert.type}
-              sx={{ m: 2, width: "40vw", position: "absolute", top: 1, left: 10 }}
+              sx={{ m: 2, width: "40vw", position: "absolute", top: 55, left: '70' }}
               onClose={() => setAlert({ show: false, type: "", messages: [] })}
             >
               {msg}
@@ -157,10 +179,11 @@ export default function Form() {
           />
 
           <TextField
-            error={error?.Image}
-            helperText={error?.Image?.join(".")}
+            error={error?.image}
+            accept="image/png,image/jpeg,image/webp"
+            helperText={error?.image?.join(".")}
             onChange={handleUpload}
-            name="Image"
+            name="image"
             margin="normal"
             variant='outlined'
             rows={6}
