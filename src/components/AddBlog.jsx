@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { blogSchema } from '../validation.js';
 import { Alert } from '@mui/material';
 import { api } from '../api/api';
+import { Avatar } from '@mui/material';
+import { Stack } from '@mui/material';
 
 export default function Form() {
 
@@ -20,6 +22,8 @@ export default function Form() {
     type: "",
     messages: []
   });
+
+  const [Image, setImage] = useState('');
 
   const handleChange = (e) => {
 
@@ -55,9 +59,7 @@ export default function Form() {
 
     e.preventDefault();
 
-    const { title, content, image } = e.target;
-
-    if (!title || !content || !image) {
+    if (!form.title || !form.content || !form.image) {
       setAlert({
         show: true,
         type: "error",
@@ -79,6 +81,8 @@ export default function Form() {
 
     api.post("/addBlog", fd)
       .then(() => {
+        setImage('');
+
         setAlert({
           show: true,
           type: "success",
@@ -115,6 +119,7 @@ export default function Form() {
   const handleUpload = (e) => {
     const file = e.target.files[0];
     const name = e.target.name; // "Image"
+    setImage(URL.createObjectURL(e.target.files[0]));
 
     // user removed file
     if (!file) {
@@ -191,6 +196,8 @@ export default function Form() {
             fullWidth
           />
 
+          {Image && <img src={Image} width={'250'} height={'250'} />}
+
           {/* <TextField
             error={error?.category}
             helperText={error?.category?.join(".")}
@@ -210,7 +217,7 @@ export default function Form() {
           </TextField> */}
 
           <Button disabled={Object.keys(error).length > 0}
-            fullWidth sx={{ p: 2, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }}
+            fullWidth sx={{ p: 2, my:3, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }}
             variant='contained'
             onClick={(e) => AddBlog(e)}>Add Blog</Button>
         </form>

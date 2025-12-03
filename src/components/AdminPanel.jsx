@@ -1,13 +1,14 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-
+import Box from "@mui/material/Box";
 const AdminPanel = () => {
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
-      <div style={{ padding: "20px", width: "100%" }}>
-        <Outlet /> {/* loads child pages: AddBlog or ViewBlogs */}
-      </div>
+
+      <Box component={'div'} sx={{ px: 5, py: 3, width: "100%", overflowX: 'auto' }}>
+        <Outlet />
+      </Box>
     </div>
   );
 };
