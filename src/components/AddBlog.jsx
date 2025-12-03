@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
 import { blogSchema } from '../validation.js';
 import { Alert } from '@mui/material';
+import { api } from '../api/api';
 
 export default function Form() {
 
@@ -39,13 +40,9 @@ export default function Form() {
 
     const updatedFields = { ...form, [e.target.name]: e.target.value };
 
-    console.log(updatedFields);
-
     setForm(updatedFields);
 
     const result = blogSchema.safeParse(updatedFields);
-
-    console.log(result);
 
     if (!result.success) {
       setError(result.error.flatten().fieldErrors);
@@ -93,7 +90,26 @@ export default function Form() {
       });
   };
 
-  console.log(error);
+  const handleUpload = (e) => {
+  const file = e.target.files[0];
+  const name = e.target.name; // "Image"
+
+  // user removed file
+  if (!file) {
+    setError({ ...error, [name]: ["Image is required"] });
+    setForm({ ...form, [name]: "" });
+    return;
+  }
+
+  // store file in state
+  setForm({ ...form, [name]: file });
+
+  // remove error if upload
+  const newErrors = { ...error };
+  delete newErrors[name];
+  setError(newErrors);
+};
+
 
   return (
     <>
@@ -143,10 +159,9 @@ export default function Form() {
           <TextField
             error={error?.Image}
             helperText={error?.Image?.join(".")}
-            value={form?.Image || ""}
+            onChange={handleUpload}
             name="Image"
             margin="normal"
-            onChange={handleChange}
             variant='outlined'
             rows={6}
             type="file"
@@ -171,7 +186,10 @@ export default function Form() {
             <MenuItem value="Politics">Politics</MenuItem>
           </TextField> */}
 
-          <Button disabled={Object.keys(error).length > 0} fullWidth sx={{ p: 2, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }} variant='contained'>Add Blog</Button>
+          <Button disabled={Object.keys(error).length > 0}
+            fullWidth sx={{ p: 2, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }}
+            variant='contained'
+            onClick={(e) => AddBlog(e)}>Add Blog</Button>
         </form>
       </Box>
     </>
