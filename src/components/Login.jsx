@@ -81,7 +81,7 @@ export default function Login() {
                 else if (err.response?.data?.error) {
                     messages.push(err.response?.data?.error);
                 }
-                
+
                 setAlert({ open: true, severity: "error", message: messages });
 
                 setTimeout(() => {
@@ -112,7 +112,7 @@ export default function Login() {
                 <Typography variant='h4' sx={{ fontSize: "24px", fontWeight: '700' }}>Admin Login</Typography>
                 <TextFeid label="Email" error={error?.email?.join()} value={form?.email || ""} helperText={error?.email?.join(".")} name="email" fullWidth variant="outlined" type="text" onChange={(e) => handleChange(e)} />
                 <TextFeid label="Password" error={error?.password?.join()} value={form?.password || ""} helperText={error?.password?.join(".")} name="password" fullWidth type="password" variant="outlined" onChange={handleChange} />
-                <Button disabled={Object.keys(error).length !== 0 ? true : false} type="submit" sx={{ width: "100%" }} onClick={(e) => handleSubmit(e)} variant='contained'>Login</Button>
+                <Button disabled={Object.keys(error).length !== 0 ? true : false} type="submit" sx={{ width: "100%", bgcolor: 'orange' }} onClick={(e) => handleSubmit(e)} variant='contained'>Login</Button>
             </Stack>
         </Stack>
     );

@@ -9,6 +9,8 @@ import { Alert } from '@mui/material';
 import { api } from '../api/api';
 import { Avatar } from '@mui/material';
 import { Stack } from '@mui/material';
+import { useRef } from "react";
+
 
 export default function Form() {
 
@@ -24,6 +26,9 @@ export default function Form() {
   });
 
   const [Image, setImage] = useState('');
+
+  const fileRef = useRef();
+
 
   const handleChange = (e) => {
 
@@ -92,6 +97,9 @@ export default function Form() {
         setTimeout(() => {
           setAlert({ show: false, type: "", messages: [] });
         }, 3000);
+
+        setForm({});
+        fileRef.current.value = "";
       })
       .catch((err) => {
 
@@ -115,7 +123,6 @@ export default function Form() {
 
       });
   };
-
   const handleUpload = (e) => {
     const file = e.target.files[0];
     const name = e.target.name; // "Image"
@@ -194,6 +201,7 @@ export default function Form() {
             rows={6}
             type="file"
             fullWidth
+            inputRef={fileRef}
           />
 
           {Image && <img src={Image} width={'250'} height={'250'} />}
@@ -217,7 +225,7 @@ export default function Form() {
           </TextField> */}
 
           <Button disabled={Object.keys(error).length > 0}
-            fullWidth sx={{ p: 2, my:3, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }}
+            fullWidth sx={{ p: 2, my: 3, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }}
             variant='contained'
             onClick={(e) => AddBlog(e)}>Add Blog</Button>
         </form>
