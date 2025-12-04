@@ -3,16 +3,23 @@ import Stack from '@mui/material/Stack';
 import { data } from '../data';
 import { Avatar, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
+import { useEffect } from 'react';
 
 export const Blog = () => {
 
     const location = useLocation();
 
-    console.log(location.pathname);
+    console.log(location.query);
+
+    const ab = new URLSearchParams(location.query);
+
+    console.log(ab.get('title'));
 
     console.log("data", data[0]);
 
     const a = data[0];
+
+    // useEffect(() => { }, []);
 
     return (
         <Stack alignItems={'center'} gap={'1rem'} sx={{ py: 2, px: 10 }}>
