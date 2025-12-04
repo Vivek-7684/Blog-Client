@@ -46,9 +46,8 @@ export const Blog = () => {
             });
     }, [])
 
-    console.log(blogs);
     return (
-        <Stack alignItems={'center'} gap={'1rem'} sx={{ py: 2, px: 10 }}>
+        <Stack alignItems={'center'} gap={'1rem'} sx={{ py: 5, px: 10 }}>
             {alert.show &&
                 (
                     <Alert
@@ -62,11 +61,11 @@ export const Blog = () => {
             }
             <Typography sx={{ fontWeight: '700', fontSize: '24px', p: 3 }}>{blogs?.title}</Typography>
 
-            <Box sx={{ bgcolor: '#fca815ff', width: '90vw', height: '3px', borderColor: 'none' }}></Box>
+            <Box sx={{ bgcolor: '#fca815ff', width: '90vw', height: '3px',my:3, borderColor: 'none' }}></Box>
 
             <Avatar alt="Blog" src={`http://localhost:3000/${blogs?.image_url.replace("\\", '/')}`} sx={{ width: '100%', height: 'auto' }} variant='square' />
 
-            <Typography sx={{ fontWeight: '500', fontSize: '18px' }}>{blogs?.content}</Typography>
+            <Typography sx={{ fontWeight: '500', fontSize: '18px', px: 10, py: 3 }}>{blogs?.content}</Typography>
         </Stack>
     )
 
