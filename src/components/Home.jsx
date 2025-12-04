@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper';
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import { data } from "../data";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
 
@@ -16,6 +16,9 @@ export default function Home() {
     const getLoadMore = () => {
         setLoadmore(prev => Math.min(prev + 5, data.length));
     }
+
+    
+
 
     return (
 

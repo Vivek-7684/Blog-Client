@@ -126,17 +126,19 @@ export default function Form() {
   const handleUpload = (e) => {
     const file = e.target.files[0];
     const name = e.target.name; // "Image"
-    setImage(URL.createObjectURL(e.target.files[0]));
 
     // user removed file
     if (!file) {
+      setImage("");
       setError({ ...error, [name]: ["Image is required"] });
       setForm({ ...form, [name]: "" });
       return;
     }
 
-    // store file in state
+    // store file in state and for preview
     setForm({ ...form, [name]: file });
+    setImage(URL.createObjectURL(e.target.files[0]));
+
 
     // remove error if upload
     const newErrors = { ...error };
