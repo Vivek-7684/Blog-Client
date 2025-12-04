@@ -1,7 +1,7 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import { data } from '../data';
-import { Avatar, Typography } from '@mui/material';
+import { Avatar, Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import { api } from '../api/api';
@@ -11,6 +11,7 @@ import Alert from "@mui/material/Alert";
 export const Blog = () => {
 
     const location = useLocation();
+    const navigate = useNavigate();
 
     const search = new URLSearchParams(location.search);
 
@@ -47,7 +48,7 @@ export const Blog = () => {
     }, [])
 
     return (
-        <Stack alignItems={'center'} gap={'1rem'} sx={{ py: 5, px: 10 }}>
+        <Stack alignItems={'center'} gap={'1rem'} sx={{ py: 2, px: 10 }}>
             {alert.show &&
                 (
                     <Alert
@@ -59,9 +60,13 @@ export const Blog = () => {
                     </Alert>
                 )
             }
-            <Typography sx={{ fontWeight: '700', fontSize: '24px', p: 3 }}>{blogs?.title}</Typography>
+            <Stack justifyContent={'start'} alignItems={'start'} sx={{ width: "100%", height: '10vh' }}>
+                <Button sx={{ fontWeight: 500, bgcolor: '#000040', color: 'white' }} onClick={() => navigate('/')}>Back</Button>
+            </Stack>
 
-            <Box sx={{ bgcolor: '#fca815ff', width: '90vw', height: '3px',my:3, borderColor: 'none' }}></Box>
+            <Typography sx={{ fontWeight: '700', fontSize: '24px' }}>{blogs?.title}</Typography>
+
+            <Box sx={{ bgcolor: '#fca815ff', width: '90vw', height: '3px', my: 2, borderColor: 'none' }}></Box>
 
             <Avatar alt="Blog" src={`http://localhost:3000/${blogs?.image_url.replace("\\", '/')}`} sx={{ width: '100%', height: 'auto' }} variant='square' />
 
