@@ -52,8 +52,9 @@ export default function Home() {
 
         <Box sx={{ bgcolor: 'rgba(255, 255, 255, 1)', width: '100%', overflowX: 'hidden' }}>
 
-            <Typography variant="h4" sx={{ p: 5, fontWeight: '700', color: 'black' }}>Recently Added Blogs</Typography>
-            <Stack direction={"row"} sx={{ p: 3, width: '100vw' }} gap={1} flexWrap={"wrap"}>
+            {blogs.length > 0 && <Typography variant="h4" sx={{ p: 5, fontWeight: '700', color: 'black' }}>Recently Added Blogs</Typography>}
+
+            {blogs.length > 0 ? (<Stack direction={"row"} sx={{ p: 3, width: '100vw' }} gap={1} flexWrap={"wrap"}>
 
                 {blogs && blogs.slice(0, loadmore).map((data, index) => {
                     return (
@@ -67,10 +68,11 @@ export default function Home() {
                         </Paper>
                     )
                 })}
-                {loadmore !== blogs.length && (<Stack sx={{ width: '100%', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+                {blogs.length > 0 && blogs.length > 5 && loadmore !== blogs.length && (<Stack sx={{ width: '100%', alignItems: 'center', justifyContent: 'center', p: 2 }}>
                     <Button sx={{ p: 2, color: 'white', bgcolor: 'orange', width: '20%', fontSize: '16px', fontWeight: '700' }} variant='contained' onClick={getLoadMore}>LoadMore...</Button>
                 </Stack>)}
-            </Stack>
+            </Stack>) :
+                <Typography variant="h6" sx={{ p: 1, fontWeight: '700', fontSize: '20px', p: 10, textAlign: 'center' }}>Please Add Your Blogs.Currently No Blogs are available to show.</Typography>}
         </Box>
 
     )
