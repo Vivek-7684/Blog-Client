@@ -6,6 +6,7 @@ import { Routes, Route } from 'react-router-dom';
 import AddBlog from './components/AddBlog.jsx';
 import ViewBlog from './components/ViewBlog.jsx';
 import AdminPanel from './components/AdminPanel.jsx';
+import { Blog } from './components/Blog.jsx';
 
 export default function App() {
     return (
@@ -27,6 +28,7 @@ export default function App() {
                         <Route path="Add-Blog" element={<AddBlog />} />
                         <Route path="View-Blog" element={<ViewBlog />} />
                     </Route>
+                    <Route path="/blog" element={<Blog />} />
                 </Route>
             </Routes>
         </>
