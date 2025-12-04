@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import {  Typography } from "@mui/material";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -6,6 +6,7 @@ import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { api } from '../api/api';
 
 export default function Home() {
@@ -14,6 +15,8 @@ export default function Home() {
     const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
 
     const [loadmore, setLoadmore] = useState(5);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         api.get("blog")
@@ -72,7 +75,7 @@ export default function Home() {
 
                 {blogs && blogs.slice(0, loadmore).map((data, index) => {
                     return (
-                        <Paper key={index} sx={{ bgcolor: 'white', width: '30%', height: '450px', p: 1, cursor: 'pointer' }} elevation={3}>
+                        <Paper key={index} sx={{ bgcolor: 'white', width: '30%', height: '450px', p: 1,cursor: 'pointer' }} onClick={()=>navigate(`/blog?title=${data.title}`)} elevation={3}>
                             <Avatar alt="Blog" src={`http://localhost:3000/${data.image_url.replace("\\", '/')}`} variant="square" sx={{ width: "100%", height: "auto" }} />
                             <Typography variant="h6" sx={{ p: 1, fontWeight: '700', fontSize: '20px' }}>{data.title}</Typography>
                             <Typography variant="p" sx={{ p: 1, fontSize: '16px', fontWeight: '500' }}>
