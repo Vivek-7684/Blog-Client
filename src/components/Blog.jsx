@@ -64,13 +64,13 @@ export const Blog = () => {
                 <Button sx={{ fontWeight: 500, bgcolor: '#000040', color: 'white' }} onClick={() => navigate('/')}>Back</Button>
             </Stack>
 
-            <Typography sx={{ fontWeight: '700', fontSize: '24px' }}>{blogs?.title}</Typography>
+            <Typography sx={{ fontWeight: '700', fontSize: '42px', lineHeight: '1.2', textAlign: 'center' }}>{blogs?.title}</Typography>
 
             <Box sx={{ bgcolor: '#fca815ff', width: '90vw', height: '3px', my: 2, borderColor: 'none' }}></Box>
 
-            <Avatar alt="Blog" src={`http://localhost:3000/${blogs?.image_url.replace("\\", '/')}`} sx={{ width: '100%', height: 'auto' }} variant='square' />
+            <Avatar alt="Blog" src={`http://localhost:3000/${blogs?.image_url.replace("\\", '/')}`} sx={{ width: '60%', height: 'auto' }} variant='square' />
 
-            <Typography sx={{ fontWeight: '500', fontSize: '18px', px: 10, py: 3 }}>{blogs?.content}</Typography>
+            <Typography sx={{ fontWeight: '400', fontSize: '18px', lineHeight: 1.6, px: 10, py: 3 }}>{blogs?.content}</Typography>
         </Stack>
     )
 
