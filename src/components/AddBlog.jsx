@@ -370,7 +370,34 @@ export default function Form() {
 
           <Button sx={{ mt: 1, mb: 2 }} variant='outlined' onClick={addSection}>Add Section</Button>
 
+          <Typography variant='h6' sx={{ mt: 3, mb: 3 }}>Author Details</Typography>
 
+          <Box
+            sx={{
+              border: "1px solid #ddd",
+              borderRadius: 2,
+              p: 2,
+              mb: 2,
+            }}
+          >
+            <TextField
+              label="Author"
+              name="author"
+              margin='normal'
+              fullWidth
+              value={form?.author || ""}
+              onChange={handleChange}
+            />
+
+            <TextField
+              label="Occupation"
+              name="occupation"
+              margin='normal'
+              fullWidth
+              value={form?.occupation || ""}
+              onChange={handleChange}
+            />
+          </Box>
 
           <Button disabled={Object.keys(error).length > 0}
             fullWidth sx={{ p: 2, my: 3, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }}
