@@ -138,9 +138,24 @@ export default function Form() {
 
     for (let key in form) fd.append(key, form[key]);
 
+    const sectionsServer = sections.map((sec) => ({
+      subTitle: sec.subTitle,
+      content: sec.content
+    }))
+
+    fd.append("sections", JSON.stringify(sectionsServer));
+
+    sections.forEach((sec) => {
+      if (sec.image) {
+        fd.append(`sectionImages[${index}]`, sec.image);
+      }
+    });
+
     api.post("/addBlog", fd)
       .then(() => {
         setImage('');
+
+        setSections([]);
 
         setAlert({
           show: true,
@@ -314,11 +329,11 @@ export default function Form() {
               <TextField
                 // error={error?.title}
                 // helperText={error?.title?.join(".")}
-                value={form?.subTitle || ""}
+                value={section?.subTitle || ""}
                 label="Sub Title"
                 name="subTitle"
                 margin="normal"
-                onChange={(e) => handleSectionChange(idx, 'subTitle', value)}
+                onChange={(e) => handleSectionChange(idx, e)}
                 variant='outlined'
                 fullWidth
               />
@@ -326,11 +341,11 @@ export default function Form() {
               <TextField
                 // error={error?.content}
                 // helperText={error?.content?.join(".")}
-                value={form?.content || ""}
+                value={section?.content || ""}
                 label="Content"
                 name="content"
                 margin="normal"
-                onChange={(e) => handleSectionChange(idx, 'content', value)}
+                onChange={(e) => handleSectionChange(idx, e)}
                 variant='outlined'
                 rows={6}
                 multiline
@@ -345,9 +360,9 @@ export default function Form() {
                 onChange={(e) => handleSectionImageUpload(idx, e)}
               />
 
-              {section.preview && (
+              {sections.preview && (
                 <img
-                  src={section.preview}
+                  src={sections[idx]?.preview}
                   width="200"
                   height="200"
                   style={{ marginTop: "8px", objectFit: "cover" }}
