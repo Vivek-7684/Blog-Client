@@ -29,6 +29,60 @@ export default function Form() {
 
   const fileRef = useRef();
 
+  const [sections, setSections] = useState([]);
+
+  const addSection = () => {
+    setSections([...sections, { subTitle: "", content: "", image: "", preview: "" }]);
+  }
+
+  const removeSection = (index) => {
+    setSections(sections.filter((_, idx) => index != idx));
+  }
+
+  const handleSectionChange = (index, e) => {
+    const { name, value } = e.target;
+
+    setSections((prev) => {
+      const updatedSections = [...prev];
+      updatedSections[index] = {
+        ...updatedSections[index],
+        [name]: value
+      }
+      return updatedSections;
+    });
+  };
+
+  const handleSectionImageUpload = (index, e) => {
+
+    const file = e.target.files[0];
+
+    if (!file) {
+      setSections((prev) => {
+        const updated = [...prev];
+        updated[index] = {
+          ...updated[index],
+          image: null,
+          preview: ""
+        };
+        return updated;
+      });
+      return;
+    }
+
+    const previewImage = URL.createObjectURL(file);
+
+    setSections((prev) => {
+      const updatedSections = [...prev];
+      updatedSections[index] = {
+        ...updatedSections[index],
+        preview: previewImage,
+        image: file
+      }
+      return updatedSections;
+    });
+
+  }
+
 
   const handleChange = (e) => {
 
@@ -123,6 +177,7 @@ export default function Form() {
 
       });
   };
+
   const handleUpload = (e) => {
     const file = e.target.files[0];
     const name = e.target.name; // "Image"
@@ -193,6 +248,37 @@ export default function Form() {
           />
 
           <TextField
+            label="Tags"
+            name="tags"
+            error={error?.tags}
+            margin='normal'
+            fullWidth
+            value={form?.tags || ""}
+            helperText={"Examples:- Reactjs, Nodejs, CPP"}
+            onChange={handleChange}
+          />
+
+          <TextField
+            label="Summary"
+            name="summary"
+            error={error?.summary}
+            margin='normal'
+            fullWidth
+            value={form?.summary || ""}
+            onChange={handleChange}
+          />
+
+          <TextField
+            label="Quote"
+            name="quote"
+            error={error?.quote}
+            margin='normal'
+            fullWidth
+            value={form?.quote || ""}
+            onChange={handleChange}
+          />
+
+          <TextField
             error={error?.image}
             accept="image/png,image/jpeg,image/webp"
             helperText={error?.image?.join(".")}
@@ -208,23 +294,83 @@ export default function Form() {
 
           {Image && <img src={Image} width={'250'} height={'250'} />}
 
-          {/* <TextField
-            error={error?.category}
-            helperText={error?.category?.join(".")}
-            value={filter?.category || ""}
-            select
-            label="category"
-            name="category"
-            margin="normal"
-            variant='outlined'
-            onChange={handleChange}
-            fullWidth
-          >
-            <MenuItem value="Technologies">Technologies</MenuItem>
-            <MenuItem value="Food">Food</MenuItem>
-            <MenuItem value="News">News</MenuItem>
-            <MenuItem value="Politics">Politics</MenuItem>
-          </TextField> */}
+          <Typography variant='h6' sx={{ mt: 3 }}>Sections</Typography>
+
+          {sections.map((section, idx) =>
+          (
+            <Box
+              key={idx}
+              sx={{
+                border: "1px solid #ddd",
+                borderRadius: 2,
+                p: 2,
+                mb: 2,
+              }}
+            >
+              <Typography variant="subtitle1">
+                Section {idx + 1}
+              </Typography>
+
+              <TextField
+                // error={error?.title}
+                // helperText={error?.title?.join(".")}
+                value={form?.subTitle || ""}
+                label="Sub Title"
+                name="subTitle"
+                margin="normal"
+                onChange={(e) => handleSectionChange(idx, 'subTitle', value)}
+                variant='outlined'
+                fullWidth
+              />
+
+              <TextField
+                // error={error?.content}
+                // helperText={error?.content?.join(".")}
+                value={form?.content || ""}
+                label="Content"
+                name="content"
+                margin="normal"
+                onChange={(e) => handleSectionChange(idx, 'content', value)}
+                variant='outlined'
+                rows={6}
+                multiline
+                fullWidth
+              />
+
+              <TextField
+                type={"file"}
+                margin="normal"
+                fullWidth
+                inputProps={{ accept: "image/png,image/jpeg,image/webp" }}
+                onChange={(e) => handleSectionImageUpload(idx, e)}
+              />
+
+              {section.preview && (
+                <img
+                  src={section.preview}
+                  width="200"
+                  height="200"
+                  style={{ marginTop: "8px", objectFit: "cover" }}
+                />
+              )}
+
+              <Button
+                sx={{ mt: 1 }}
+                variant="text"
+                color="error"
+                onClick={() => removeSection(idx)}
+              >
+                Remove Section
+              </Button>
+
+
+            </Box>
+          )
+          )}
+
+          <Button sx={{ mt: 1, mb: 2 }} variant='outlined' onClick={addSection}>Add Section</Button>
+
+
 
           <Button disabled={Object.keys(error).length > 0}
             fullWidth sx={{ p: 2, my: 3, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }}
