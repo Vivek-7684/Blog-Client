@@ -14,8 +14,6 @@ import { useRef } from "react";
 
 export default function Form() {
 
-  const Navigate = useNavigate();
-
   const [form, setForm] = useState({}); // form data
   const [error, setError] = useState({}); // real time error
 
@@ -147,7 +145,7 @@ export default function Form() {
 
     sections.forEach((sec) => {
       if (sec.image) {
-        fd.append(`sectionImages[${index}]`, sec.image);
+        fd.append(`sectionImages`, sec.image);
       }
     });
 
