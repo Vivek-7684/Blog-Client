@@ -175,7 +175,7 @@ export default function Form() {
         if (Array.isArray(err.response.data)) {
           messages = err.response.data.map((errmsg) => errmsg.msg);
         } else {
-          messages = [err.response.data];
+          messages = [err.response.data.error];
         }
 
         setAlert({
@@ -213,7 +213,6 @@ export default function Form() {
     delete newErrors[name];
     setError(newErrors);
   };
-
 
   return (
     <>
@@ -352,15 +351,16 @@ export default function Form() {
 
               <TextField
                 type={"file"}
+                name="sectionImages"
                 margin="normal"
                 fullWidth
                 inputProps={{ accept: "image/png,image/jpeg,image/webp" }}
                 onChange={(e) => handleSectionImageUpload(idx, e)}
               />
 
-              {sections.preview && (
+              {section.preview && (
                 <img
-                  src={sections[idx]?.preview}
+                  src={section?.preview}
                   width="200"
                   height="200"
                   style={{ marginTop: "8px", objectFit: "cover" }}

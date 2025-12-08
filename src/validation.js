@@ -17,10 +17,7 @@ export const blogSchema = z.object({
     .string()
     .max(2000, "Maximum 2000 Characters are allowed.")
     .optional(),
-  image: z
-    .string()
-    .max(150, "Image path will be upto 150 Characters. ")
-    .optional(),
+  image: z.instanceof(File, { message: 'File is Required' })
 });
 
 
