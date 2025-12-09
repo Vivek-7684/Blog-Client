@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import { api } from '../api/api';
 import Alert from "@mui/material/Alert";
+import { TextField } from '@mui/material';
 
 
 export const Blog = () => {
@@ -18,11 +19,18 @@ export const Blog = () => {
     const [blogs, setBlogs] = useState();
     const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
 
+    const [comments, setComments] = useState([]);
+    const [userComment, setUserComment] = useState({ name: "", comment: "" });
+
     useEffect(() => {
         api.get(`/blog/?title=${search.get('title')}`)
             .then((response) => {
                 setBlogs(response.data[0]);
                 console.log(response.data[0]);
+                if (response.data[0]?.blog_id) {
+                    api.get(`/comment/${response.data[0].blog_id}`)
+                        .then(res => setComments(res.data));
+                }
                 setAlert({ show: false, type: "", messages: [] });
             })
             .catch((err) => {
@@ -46,7 +54,26 @@ export const Blog = () => {
                 }, 3000);
 
             });
+
     }, [location.search])
+
+    const submitComment = () => {
+        if (!userComment.name || !userComment.comment) return;
+
+        api.post("/comment/add", {
+            blog_id: blogs.blog_id,
+            name: userComment.name,
+            comment: userComment.comment
+        })
+            .then(() => {
+                setUserComment({ name: "", comment: "" });
+                api.get(`/comment/${blogs.blog_id}`)
+                    .then(res => setComments(res.data));
+            });
+    };
+
+
+
 
     return (
         <Stack alignItems={'center'} gap={'1rem'} sx={{ py: 2, px: 10 }}>
@@ -160,6 +187,55 @@ export const Blog = () => {
                     </Stack>
                 </Box>
             )}
+
+            <Box sx={{ width: "80%", mt: 6 }}>
+                <Typography sx={{ fontSize: "24px", fontWeight: 700 }}>Leave a reply:</Typography>
+
+                <TextField
+                    multiline
+                    rows={5}
+                    fullWidth
+                    placeholder="Write your comment"
+                    sx={{ my: 2 }}
+                    value={userComment.comment}
+                    onChange={(e) => setUserComment({ ...userComment, comment: e.target.value })}
+                />
+
+                <Stack direction="row" gap={2}>
+                    <TextField
+                        placeholder="Name"
+                        value={userComment.name}
+                        onChange={(e) => setUserComment({ ...userComment, name: e.target.value })}
+                        fullWidth
+                    />
+                </Stack>
+
+                <Button
+                    variant="contained"
+                    sx={{ mt: 2,bgcolor:'orange' }}
+                    onClick={submitComment}
+                >
+                    Post Comment
+                </Button>
+            </Box>
+
+            <Box sx={{ width: "80%", maxHeight: "300px", overflowY: "auto", mt: 4, border: "1px solid #eee", borderRadius: "8px" }}>
+                {comments.length === 0 && <Typography>No comments yet.</Typography>}
+                <Box sx={{ position: 'relative' }}>
+                    <Box sx={{ position: 'sticky', top: 0, bgcolor: 'white' }}>
+                        <Typography sx={{ fontSize: "24px", fontWeight: 700, textAlign: 'center', p: 1 }}>Comments</Typography>
+                        <Box sx={{ bgcolor: '#fca815ff', width: '90vw', height: '2px',mx:5, my: 2, borderColor: 'none' }}></Box>
+                    </Box>
+                    {comments.map((c, i) => (
+                        <Box key={i} sx={{ mb: 2, p: 1,px:3, borderBottom: "1px solid #ddd" }}>
+                            <Typography sx={{ fontWeight: 700 }}>{c.name}</Typography>
+                            <Typography sx={{ fontSize: "15px", mt: 1 }}>{c.comment}</Typography>
+                            <Typography sx={{ fontSize: "12px", color: "gray", mt: 1 }}>{new Date(c.created_at).toLocaleString()}</Typography>
+                        </Box>
+                    ))}
+                </Box>
+            </Box>
+
 
 
             {/* Tags */}
