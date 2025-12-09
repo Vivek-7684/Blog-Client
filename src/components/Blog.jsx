@@ -92,19 +92,18 @@ export const Blog = () => {
                 <Button sx={{ fontWeight: 500, bgcolor: '#000040', color: 'white' }} onClick={() => navigate('/')}>Back</Button>
             </Stack>
 
+            {blogs?.created_at && (
+                <Typography sx={{ fontSize: "14px", fontWeight: 500, textAlign: "center", color: "gray" }}>
+                    Published on — {blogs.created_at.slice(0, 10)}
+                </Typography>
+            )}
+
             <Typography sx={{ fontWeight: '700', fontSize: '42px', lineHeight: '1', textAlign: 'center' }}>{blogs?.title}</Typography>
 
             {/* Summary */}
             {blogs?.summary && (
-                <Typography sx={{ mt: 1, fontSize: "18px", fontWeight: 500, textAlign: "center" }}>
+                <Typography sx={{ fontSize: "18px", fontWeight: 500, textAlign: "center" }}>
                     {blogs.summary}
-                </Typography>
-            )}
-
-            {/* Author + Occupation */}
-            {blogs?.author && (
-                <Typography sx={{ mt: 1, fontSize: "16px", fontWeight: 600, textAlign: "center" }}>
-                    Written By — {blogs.author} ({blogs.occupation})
                 </Typography>
             )}
 
@@ -150,6 +149,29 @@ export const Blog = () => {
                     </Typography>
                 </Box>
             ))}
+
+            {/* Author Section */}
+            {blogs?.author && (
+                <Box sx={{
+                    width: "80%",
+                    mt: 6,
+                    p: 3,
+                    borderRadius: 2,
+                    bgcolor: "#f9f9f9"
+                }}>
+                    <Typography sx={{ fontSize: "24px", fontWeight: 700, mb: 2 }}>
+                        About the Author
+                    </Typography>
+
+                    <Typography sx={{ fontSize: "18px", fontWeight: 600 }}>
+                        {blogs.author}
+                    </Typography>
+
+                    <Typography sx={{ fontSize: "16px", mt: 1, color: "gray" }}>
+                        {blogs.occupation}
+                    </Typography>
+                </Box>
+            )}
 
             {/*  Related Posts Section */}
             {blogs?.relatedPosts?.length > 0 && (
@@ -212,7 +234,7 @@ export const Blog = () => {
 
                 <Button
                     variant="contained"
-                    sx={{ mt: 2,bgcolor:'orange' }}
+                    sx={{ mt: 2, bgcolor: 'orange' }}
                     onClick={submitComment}
                 >
                     Post Comment
@@ -224,10 +246,10 @@ export const Blog = () => {
                 <Box sx={{ position: 'relative' }}>
                     <Box sx={{ position: 'sticky', top: 0, bgcolor: 'white' }}>
                         <Typography sx={{ fontSize: "24px", fontWeight: 700, textAlign: 'center', p: 1 }}>Comments</Typography>
-                        <Box sx={{ bgcolor: '#fca815ff', width: '90vw', height: '2px',mx:5, my: 2, borderColor: 'none' }}></Box>
+                        <Box sx={{ bgcolor: '#fca815ff', width: '90vw', height: '2px', mx: 5, my: 1, borderColor: 'none' }}></Box>
                     </Box>
                     {comments.map((c, i) => (
-                        <Box key={i} sx={{ mb: 2, p: 1,px:3, borderBottom: "1px solid #ddd" }}>
+                        <Box key={i} sx={{ mb: 2, p: 1, px: 3, borderBottom: "1px solid #ddd" }}>
                             <Typography sx={{ fontWeight: 700 }}>{c.name}</Typography>
                             <Typography sx={{ fontSize: "15px", mt: 1 }}>{c.comment}</Typography>
                             <Typography sx={{ fontSize: "12px", color: "gray", mt: 1 }}>{new Date(c.created_at).toLocaleString()}</Typography>
@@ -287,7 +309,6 @@ export const Blog = () => {
                 )}
 
             </Stack>
-
 
 
         </Stack>
