@@ -30,8 +30,11 @@ export default function Form() {
   const [sections, setSections] = useState([]);
 
   const addSection = () => {
-    setSections([...sections, { subTitle: "", content: "", image: "", preview: "" }]);
-  }
+    setSections([
+      ...sections,
+      { subTitle: "", content: "", image: "", preview: "", error: null }
+    ]);
+  };
 
   const removeSection = (index) => {
     setSections(sections.filter((_, idx) => index != idx));
@@ -51,35 +54,55 @@ export default function Form() {
   };
 
   const handleSectionImageUpload = (index, e) => {
-
     const file = e.target.files[0];
+    const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
 
+    // User ne file hata di
     if (!file) {
       setSections((prev) => {
         const updated = [...prev];
         updated[index] = {
           ...updated[index],
           image: null,
-          preview: ""
+          preview: "",
+          error: "Section image is required"
         };
         return updated;
       });
       return;
     }
 
+    // Wrong format (e.g. .avif, .svg, .gif, etc.)
+    if (!allowedTypes.includes(file.type)) {
+      setSections((prev) => {
+        const updated = [...prev];
+        updated[index] = {
+          ...updated[index],
+          image: null,
+          preview: "",
+          error: "Only JPG, JPEG and WEBP images are allowed"
+        };
+        return updated;
+      });
+
+      e.target.value = ""; // input reset
+      return;
+    }
+
+    // Valid image
     const previewImage = URL.createObjectURL(file);
 
     setSections((prev) => {
-      const updatedSections = [...prev];
-      updatedSections[index] = {
-        ...updatedSections[index],
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        image: file,
         preview: previewImage,
-        image: file
-      }
-      return updatedSections;
+        error: null
+      };
+      return updated;
     });
-
-  }
+  };
 
 
   const handleChange = (e) => {
@@ -195,6 +218,8 @@ export default function Form() {
     const file = e.target.files[0];
     const name = e.target.name; // "Image"
 
+    const allowedFiles = ["image/png", "image/jpeg", "image/webp"];
+
     // user removed file
     if (!file) {
       setImage("");
@@ -203,10 +228,17 @@ export default function Form() {
       return;
     }
 
+    if (!allowedFiles.includes(file.type)) {
+      setError(prev => ({ ...prev, image: ['Only JPG,WEBP and JPEG files are allowed.'] }));
+      return;
+    }
+
+    //setError
+    setError(prev => ({ ...prev, image: null }));
+
     // store file in state and for preview
     setForm({ ...form, [name]: file });
     setImage(URL.createObjectURL(e.target.files[0]));
-
 
     // remove error if upload
     const newErrors = { ...error };
@@ -350,13 +382,19 @@ export default function Form() {
               />
 
               <TextField
-                type={"file"}
+                type="file"
                 name="sectionImages"
                 margin="normal"
                 fullWidth
-                inputProps={{ accept: "image/png,image/jpeg,image/webp" }}
+                accept="image/png,image/jpeg,image/webp"
                 onChange={(e) => handleSectionImageUpload(idx, e)}
               />
+
+              {section.error && (
+                <Typography sx={{ fontSize: "14px", color: "red", mt: 1 }}>
+                  {section.error}
+                </Typography>
+              )}
 
               {section.preview && (
                 <img
@@ -366,6 +404,7 @@ export default function Form() {
                   style={{ marginTop: "8px", objectFit: "cover" }}
                 />
               )}
+
 
               <Button
                 sx={{ mt: 1 }}

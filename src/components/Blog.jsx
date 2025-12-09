@@ -124,6 +124,44 @@ export const Blog = () => {
                 </Box>
             ))}
 
+            {/*  Related Posts Section */}
+            {blogs?.relatedPosts?.length > 0 && (
+                <Box sx={{ width: "100%", my: 6 }}>
+                    <Typography sx={{ fontSize: "28px", fontWeight: 700, mb: 4 }}>
+                        Related Posts
+                    </Typography>
+
+                    <Stack direction="row" gap={3} flexWrap="wrap">
+                        {blogs.relatedPosts.map((post, index) => (
+                            <Box
+                                key={index}
+                                sx={{ width: "30%", cursor: "pointer" }}
+                                onClick={() => navigate(`/blog?title=${post.title}`)}
+                            >
+                                <Avatar
+                                    src={
+                                        post.image_url
+                                            ? `http://localhost:3000/${post.image_url.replace("\\", "/")}`
+                                            : ""
+                                    }
+                                    variant="square"
+                                    sx={{
+                                        width: "100%",
+                                        height: "230px",
+                                        borderRadius: 2,
+                                        "& img": { objectFit: "cover" }
+                                    }}
+                                />
+                                <Typography sx={{ fontWeight: 700, fontSize: "18px", mt: 2 }}>
+                                    {post.title}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Stack>
+                </Box>
+            )}
+
+
             {/* Tags */}
             {blogs?.tags && (
                 <Typography sx={{ mt: 1, fontSize: "14px", fontStyle: "Bold", fontWeight: '700', textAlign: "center" }}>
