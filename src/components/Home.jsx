@@ -1,4 +1,4 @@
-import {  Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -51,8 +51,6 @@ export default function Home() {
         setLoadmore(prev => Math.min(prev + 5, blogs.length));
     }
 
-    console.log(alert);
-
     return (
 
         <Box sx={{ bgcolor: 'rgba(255, 255, 255, 1)', width: '100%', overflowX: 'hidden' }}>
@@ -75,8 +73,12 @@ export default function Home() {
 
                 {blogs && blogs.slice(0, loadmore).map((data, index) => {
                     return (
-                        <Paper key={index} sx={{ bgcolor: 'white', width: '30%', height: '450px', p: 1,cursor: 'pointer' }} onClick={()=>navigate(`/blog?title=${data.title}`)} elevation={3}>
-                            <Avatar alt="Blog" src={`http://localhost:3000/${data.image_url.replace("\\", '/')}`} variant="square" sx={{ width: "100%", height: "auto" }} />
+                        <Paper key={index} sx={{ bgcolor: 'white', width: '30%', height: '450px', p: 1, cursor: 'pointer' }} onClick={() => navigate(`/blog?title=${data.title}`)} elevation={3}>
+                            <Avatar alt="Blog" src={`http://localhost:3000/${data.image_url.replace("\\", '/')}`} variant="square" sx={{
+                                width: "380px", height: "220px", "& img": {
+                                    objectFit: "fill"
+                                }
+                            }} />
                             <Typography variant="h6" sx={{ p: 1, fontWeight: '700', fontSize: '20px' }}>{data.title}</Typography>
                             <Typography variant="p" sx={{ p: 1, fontSize: '16px', fontWeight: '500' }}>
                                 {data.content.substring(0, 300)}
@@ -89,7 +91,7 @@ export default function Home() {
                     <Button sx={{ p: 2, color: 'white', bgcolor: 'orange', width: '20%', fontSize: '16px', fontWeight: '700' }} variant='contained' onClick={getLoadMore}>LoadMore...</Button>
                 </Stack>)}
             </Stack>) :
-                <Typography variant="h6" sx={{ p: 1, fontWeight: '700', fontSize: '20px', p: 10, textAlign: 'center' }}>Please Add Your Blogs.Currently No Blogs are available to show.</Typography>}
+                <Typography variant="h6" sx={{ fontWeight: '700', fontSize: '20px', p: 10, textAlign: 'center' }}>Please Add Your Blogs.Currently No Blogs are available to show.</Typography>}
         </Box>
 
     )
