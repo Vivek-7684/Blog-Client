@@ -29,6 +29,7 @@ export default function Form() {
 
   const [sections, setSections] = useState([]);
 
+
   const addSection = () => {
     setSections([
       ...sections,
@@ -246,6 +247,16 @@ export default function Form() {
     setError(newErrors);
   };
 
+  const removeMainImage = () => {
+    setImage('');
+    setForm({ ...form, image: '' });
+    fileRef.current.value = "";
+
+    setError((prev) => ({ ...prev, image: ['image is required'] }));
+  }
+
+
+
   return (
     <>
 
@@ -337,6 +348,19 @@ export default function Form() {
           />
 
           {Image && <img src={Image} width={'250'} height={'250'} />}
+
+          {Image && (
+            <Box sx={{ mt: 2 }}>
+              <Button
+                color="error"
+                variant="outlined"
+                sx={{ mt: 1 }}
+                onClick={removeMainImage}
+              >
+                Remove Image
+              </Button>
+            </Box>
+          )}
 
           <Typography variant='h6' sx={{ mt: 3 }}>Sections</Typography>
 
