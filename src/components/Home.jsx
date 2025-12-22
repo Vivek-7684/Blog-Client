@@ -73,7 +73,7 @@ export default function Home() {
 
                 {blogs && blogs.slice(0, loadmore).map((data, index) => {
                     return (
-                        <Paper key={index} sx={{ bgcolor: 'white', width: '30%', height: '450px', p: 1, cursor: 'pointer' }} onClick={() => navigate(`/blog?title=${data.title}`)} elevation={3}>
+                        <Paper key={index} sx={{ bgcolor: 'white', width: '30%', height: '490px', p: 1, cursor: 'pointer' }} onClick={() => navigate(`/blog?title=${data.title}`)} elevation={3}>
                             <Avatar alt="Blog" src={`http://localhost:3000/${data.image_url.replace("\\", '/')}`} variant="square" sx={{
                                 width: "380px", height: "220px", "& img": {
                                     objectFit: "fill"
@@ -83,6 +83,7 @@ export default function Home() {
                             <Typography variant="p" sx={{ p: 1, fontSize: '16px', fontWeight: '500' }}>
                                 {data.content.substring(0, 300)}
                             </Typography>
+                            {data.views && <Typography sx={{ color: 'grey', fontSize: '16px',fontWeight:'500' }}>{data.views} views</Typography>}
                             <Button sx={{ fontSize: '10px', p: 1 }}>ReadMore</Button>
                         </Paper>
                     )

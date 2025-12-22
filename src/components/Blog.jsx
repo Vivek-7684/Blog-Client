@@ -73,7 +73,7 @@ export const Blog = () => {
     };
 
 
-
+    // console.log(blogs);
 
     return (
         <Stack alignItems={'center'} gap={'1rem'} sx={{ py: 2, px: 10 }}>
@@ -97,6 +97,9 @@ export const Blog = () => {
                     Published on — {blogs.created_at.slice(0, 10)}
                 </Typography>
             )}
+            
+            {/* Views */}
+            {blogs?.views && <Typography sx={{ color: 'grey', fontSize: '16px',fontWeight:'700' }}>{blogs.views} views</Typography>}
 
             <Typography sx={{ fontWeight: '700', fontSize: '42px', lineHeight: '1', textAlign: 'center' }}>{blogs?.title}</Typography>
 
