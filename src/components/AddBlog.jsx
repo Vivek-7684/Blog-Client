@@ -176,8 +176,6 @@ export default function Form() {
       }
     });
 
-    fd.append("author_desc", form.author_desc);
-
     api.post("/addBlog", fd)
       .then(() => {
         setImage('');

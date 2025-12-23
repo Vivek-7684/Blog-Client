@@ -97,9 +97,9 @@ export const Blog = () => {
                     Published on — {blogs.created_at.slice(0, 10)}
                 </Typography>
             )}
-            
+
             {/* Views */}
-            {blogs?.views && <Typography sx={{ color: 'grey', fontSize: '16px',fontWeight:'700' }}>{blogs.views} views</Typography>}
+            {blogs?.views && <Typography sx={{ color: 'grey', fontSize: '16px', fontWeight: '700' }}>{blogs.views} views</Typography>}
 
             <Typography sx={{ fontWeight: '700', fontSize: '42px', lineHeight: '1', textAlign: 'center' }}>{blogs?.title}</Typography>
 
@@ -155,26 +155,47 @@ export const Blog = () => {
 
             {/* Author Section */}
             {blogs?.author && (
-                <Box sx={{
-                    width: "80%",
-                    mt: 6,
-                    p: 3,
-                    borderRadius: 2,
-                    bgcolor: "#f9f9f9"
-                }}>
-                    <Typography sx={{ fontSize: "24px", fontWeight: 700, mb: 2 }}>
-                        About the Author
-                    </Typography>
+                <Box
+                    sx={{
+                        width: "80%",
+                        mt: 6,
+                        p: 3,
+                        borderRadius: 2,
+                        bgcolor: "#f9f9f9",
+                        display: "flex",
+                        gap: 3,
+                        alignItems: "center"
+                    }}
+                >
+                    {/* Author Image */}
+                    {blogs?.author_image && (
+                        <Avatar
+                            src={`http://localhost:3000/${blogs.author_image.replace("\\", "/")}`}
+                            sx={{ width: 100, height: 100 }}
+                        />
+                    )}
 
-                    <Typography sx={{ fontSize: "18px", fontWeight: 600 }}>
-                        {blogs.author}
-                    </Typography>
+                    {/* Author Details */}
+                    <Box>
+                        <Typography sx={{ fontSize: "22px", fontWeight: 700 }}>
+                            {blogs.author}
+                        </Typography>
 
-                    <Typography sx={{ fontSize: "16px", mt: 1, color: "gray" }}>
-                        {blogs.occupation}
-                    </Typography>
+                        {blogs.occupation && (
+                            <Typography sx={{ fontSize: "16px", color: "gray" }}>
+                                {blogs.occupation}
+                            </Typography>
+                        )}
+
+                        {blogs.author_desc && (
+                            <Typography sx={{ mt: 1, fontSize: "15px", lineHeight: 1.6 }}>
+                                {blogs.author_desc}
+                            </Typography>
+                        )}
+                    </Box>
                 </Box>
             )}
+
 
             {/*  Related Posts Section */}
             {blogs?.relatedPosts?.length > 0 && (
