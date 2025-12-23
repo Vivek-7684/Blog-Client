@@ -29,11 +29,14 @@ export default function Form() {
 
   const [sections, setSections] = useState([]);
 
+  const [authImage, setAuthImage] = useState("");
+
+  const authorImageRef = useRef();
 
   const addSection = () => {
     setSections([
       ...sections,
-      { subTitle: "", content: "", image: "", preview: "", error: null }
+      { subTitle: "", content: "", image: "", preview: "", error: null, inputKey: Date.now() }
     ]);
   };
 
@@ -173,6 +176,8 @@ export default function Form() {
       }
     });
 
+    fd.append("author_desc", form.author_desc);
+
     api.post("/addBlog", fd)
       .then(() => {
         setImage('');
@@ -253,6 +258,20 @@ export default function Form() {
     fileRef.current.value = "";
 
     setError((prev) => ({ ...prev, image: ['image is required'] }));
+  }
+
+  const removeSectionImage = (index) => {
+    setSections(prev => {
+      const updated = [...prev];
+
+      updated[index] = {
+        ...updated[index],
+        image: null,
+        preview: '',
+        inputKey: Date.now()
+      }
+      return updated;
+    })
   }
 
 
@@ -406,6 +425,7 @@ export default function Form() {
               />
 
               <TextField
+                key={section.inputKey}
                 type="file"
                 name="sectionImages"
                 margin="normal"
@@ -429,6 +449,12 @@ export default function Form() {
                 />
               )}
 
+              {section.preview && (
+                <Button sx={{ mt: 1 }}
+                  variant="text"
+                  color="error"
+                  onClick={() => removeSectionImage(idx)}>Remove Image</Button>
+              )}
 
               <Button
                 sx={{ mt: 1 }}
@@ -438,7 +464,6 @@ export default function Form() {
               >
                 Remove Section
               </Button>
-
 
             </Box>
           )
@@ -473,6 +498,47 @@ export default function Form() {
               value={form?.occupation || ""}
               onChange={handleChange}
             />
+
+            <TextField
+              label="Short Description"
+              name="author_desc"
+              fullWidth
+              margin='normal'
+              value={form?.author_desc || ""}
+              onChange={handleChange}
+            />
+
+            <TextField
+              type="file"
+              name="author_image"
+              margin='normal'
+              accept="image/png,image/jpeg,image/webp"
+              inputRef={authorImageRef}
+              onChange={(e) => {
+                const file = e.target.files[0];
+
+                if (!file) return;
+
+                setForm({ ...form, author_image: file });
+                setAuthImage(URL.createObjectURL(file));
+              }}
+              fullWidth />
+
+            {authImage && (
+              <>
+                <img src={authImage} width="150" />
+                <Button
+                  color="error"
+                  onClick={() => {
+                    setAuthImage("");
+                    setForm({ ...form, author_image: "" });
+                    authorImageRef.current.value = "";
+                  }}
+                >
+                  Remove Author Image
+                </Button>
+              </>
+            )}
           </Box>
 
           <Button disabled={Object.keys(error).length > 0}
