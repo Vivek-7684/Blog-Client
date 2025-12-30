@@ -498,7 +498,7 @@ export default function Form() {
                   />
 
                   <Box
-                     className="delete-icon"
+                    className="delete-icon"
                     onClick={() => removeSectionImage(idx)}
                     sx={{
                       position: "absolute",
@@ -520,14 +520,6 @@ export default function Form() {
                     ❌
                   </Box>
                 </Box>
-              )}
-
-
-              {section.preview && (
-                <Button sx={{ mt: 1 }}
-                  variant="text"
-                  color="error"
-                  onClick={() => removeSectionImage(idx)}>Remove Image</Button>
               )}
 
               <Button
@@ -599,20 +591,56 @@ export default function Form() {
               fullWidth />
 
             {authImage && (
-              <>
-                <img src={authImage} width="150" />
-                <Button
-                  color="error"
+              <Box
+                sx={{
+                  position: "relative",
+                  width: 150,
+                  height: 150,
+                  mt: 2,
+                  "&:hover .delete-icon": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                <img
+                  src={authImage}
+                  width="150"
+                  height="150"
+                  style={{
+                    objectFit: "cover",
+                    borderRadius: "50%", // profile look
+                  }}
+                />
+
+                <Box
+                  className="delete-icon"
                   onClick={() => {
                     setAuthImage("");
                     setForm({ ...form, author_image: "" });
                     authorImageRef.current.value = "";
                   }}
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    bgcolor: "rgba(0,0,0,0.6)",
+                    color: "white",
+                    borderRadius: "50%",
+                    width: '100%',
+                    height: '100%',
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    opacity: 0,
+                    transition: "0.3s",
+                  }}
                 >
-                  Remove Author Image
-                </Button>
-              </>
+                  ❌
+                </Box>
+              </Box>
             )}
+
           </Box>
 
           <Button disabled={Object.keys(error).length > 0}
