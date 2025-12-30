@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import { api } from '../api/api';
 import Alert from "@mui/material/Alert";
 import { TextField } from '@mui/material';
+import DOMPurify from 'dompurify';
+
 
 
 export const Blog = () => {
@@ -121,7 +123,7 @@ export const Blog = () => {
                 </Typography>
             )}
 
-            <Typography sx={{ fontWeight: '400', fontSize: '18px', lineHeight: 1.6, px: 10, py: 3 }}>{blogs?.content}</Typography>
+            <Typography sx={{ fontWeight: '400', fontSize: '18px', lineHeight: 1.6, px: 10, py: 3 }} dangerouslySetInnerHTML={{ __html:  DOMPurify.sanitize(blogs?.content) }}></Typography>
 
             {/* Sections */}
             {blogs?.sections?.map((sec) => (

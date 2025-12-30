@@ -10,6 +10,8 @@ import { api } from '../api/api';
 import { Avatar } from '@mui/material';
 import { Stack } from '@mui/material';
 import { useRef } from "react";
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 
 export default function Form() {
@@ -272,7 +274,9 @@ export default function Form() {
     })
   }
 
-
+  const handleContent = (value) => {
+    setForm({ ...form, ["content"]: value });
+  }
 
   return (
     <>
@@ -305,7 +309,7 @@ export default function Form() {
             fullWidth
           />
 
-          <TextField
+          {/* <TextField
             error={error?.content}
             helperText={error?.content?.join(".")}
             value={form?.content || ""}
@@ -317,6 +321,12 @@ export default function Form() {
             rows={6}
             multiline
             fullWidth
+          /> */}
+
+          <ReactQuill
+            value={form?.content || ""}
+            onChange={handleContent}
+            theme="snow"
           />
 
           <TextField
@@ -364,20 +374,50 @@ export default function Form() {
             inputRef={fileRef}
           />
 
-          {Image && <img src={Image} width={'250'} height={'250'} />}
-
           {Image && (
-            <Box sx={{ mt: 2 }}>
-              <Button
-                color="error"
-                variant="outlined"
-                sx={{ mt: 1 }}
+            <Box
+              sx={{
+                position: "relative",
+                width: 250,
+                height: 250,
+                mt: 2,
+                "&:hover .delete-icon": {
+                  opacity: 1,
+                },
+              }}
+            >
+              <img
+                src={Image}
+                width="250"
+                height="250"
+                style={{ objectFit: "cover", borderRadius: "8px" }}
+              />
+
+              <Box
+                className="delete-icon"
                 onClick={removeMainImage}
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  bgcolor: "rgba(0,0,0,0.6)",
+                  color: "white",
+                  borderRadius: "50%",
+                  width: 32,
+                  height: 32,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  opacity: 0,
+                  transition: "0.3s",
+                }}
               >
-                Remove Image
-              </Button>
+                ❌
+              </Box>
             </Box>
           )}
+
 
           <Typography variant='h6' sx={{ mt: 3 }}>Sections</Typography>
 
@@ -439,13 +479,49 @@ export default function Form() {
               )}
 
               {section.preview && (
-                <img
-                  src={section?.preview}
-                  width="200"
-                  height="200"
-                  style={{ marginTop: "8px", objectFit: "cover" }}
-                />
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: 200,
+                    height: 200,
+                    mt: 1,
+                    "&:hover .delete-icon": {
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  <img
+                    src={section.preview}
+                    width="200"
+                    height="200"
+                    style={{ objectFit: "cover", borderRadius: "8px" }}
+                  />
+
+                  <Box
+                     className="delete-icon"
+                    onClick={() => removeSectionImage(idx)}
+                    sx={{
+                      position: "absolute",
+                      top: 6,
+                      right: 6,
+                      bgcolor: "rgba(0,0,0,0.6)",
+                      color: "white",
+                      borderRadius: "50%",
+                      width: 30,
+                      height: 30,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      opacity: 0,
+                      transition: "0.3s",
+                    }}
+                  >
+                    ❌
+                  </Box>
+                </Box>
               )}
+
 
               {section.preview && (
                 <Button sx={{ mt: 1 }}

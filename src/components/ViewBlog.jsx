@@ -26,8 +26,7 @@ const ViewBlog = () => {
             <Paper key={index} sx={{ bgcolor: 'white', width: '30%', height: '30%', p: 1 }} elevation={3}>
               <Avatar alt="Blog" src={data.image} variant="square" sx={{ width: "100%", height: "auto" }} />
               <Typography variant="h6" sx={{ p: 1, fontWeight: '700', fontSize: '20px' }}>{data.title}</Typography>
-              <Typography variant="p" sx={{ p: 1, fontSize: '16px', fontWeight: '500' }}>
-                {data.description}
+              <Typography variant="div" sx={{ p: 1, fontSize: '16px', fontWeight: '500' }} dangerouslySetInnerHTML={{ __html: `${data.description}` }}>
               </Typography>
               <Button sx={{ fontSize: '10px', p: 1 }}>ReadMore</Button>
             </Paper>

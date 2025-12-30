@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import DOMPurify from 'dompurify';
 import { api } from '../api/api';
 
 export default function Home() {
@@ -73,17 +74,17 @@ export default function Home() {
 
                 {blogs && blogs.slice(0, loadmore).map((data, index) => {
                     return (
-                        <Paper key={index} sx={{ bgcolor: 'white', width: '30%', height: '490px', p: 1, cursor: 'pointer' }} onClick={() => navigate(`/blog?title=${data.title}`)} elevation={3}>
+                        <Paper key={index} sx={{ bgcolor: 'white', width: '30%', height: '570px', p: 1, cursor: 'pointer' }} onClick={() => navigate(`/blog?title=${data.title}`)} elevation={3}>
                             <Avatar alt="Blog" src={`http://localhost:3000/${data.image_url.replace("\\", '/')}`} variant="square" sx={{
                                 width: "380px", height: "220px", "& img": {
                                     objectFit: "fill"
                                 }
                             }} />
                             <Typography variant="h6" sx={{ p: 1, fontWeight: '700', fontSize: '20px' }}>{data.title}</Typography>
-                            <Typography variant="p" sx={{ p: 1, fontSize: '16px', fontWeight: '500' }}>
-                                {data.content.substring(0, 300)}
+                            <Typography component={"p"} sx={{ p: 1, fontSize: '16px', fontWeight: '500', }}
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data.content.substring(0, 350)) }}>
                             </Typography>
-                            {data.views && <Typography sx={{ color: 'grey', fontSize: '16px',fontWeight:'500' }}>{data.views} views</Typography>}
+                            {data.views && <Typography sx={{ color: 'grey', fontSize: '16px', fontWeight: '500', px: 1 }}>{data.views} views</Typography>}
                             <Button sx={{ fontSize: '10px', p: 1 }}>ReadMore</Button>
                         </Paper>
                     )
