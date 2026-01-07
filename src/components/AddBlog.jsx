@@ -18,7 +18,7 @@ export default function Form() {
 
   const [form, setForm] = useState({}); // form data
   const [error, setError] = useState({}); // real time error
-
+  console.log(error);
   const [alert, setAlert] = useState({  // alert messages
     show: false,
     type: "",
