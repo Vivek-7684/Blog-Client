@@ -1,4 +1,4 @@
-import { api } from "../api/axios";
+import { api } from "../api/api";
 
 export const getCommentService = (blogId) => {
     return api.get(`/comment/${response.data[0].blog_id}`)

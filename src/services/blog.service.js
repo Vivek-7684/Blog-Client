@@ -1,4 +1,4 @@
-import { api } from "../api/axios";
+import { api } from "../api/api";
 
 export const addblogService = (formData) => {
     return api.post('/addBlog', formData);

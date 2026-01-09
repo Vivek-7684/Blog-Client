@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
-import { data } from '../data';
 import { Avatar, Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
@@ -9,73 +8,29 @@ import Alert from "@mui/material/Alert";
 import { TextField } from '@mui/material';
 import DOMPurify from 'dompurify';
 
+import { useBlogDetails } from '../hooks/useBlogDetails';
+import { useComment } from "../hooks/useComment";
+
 
 
 export const Blog = () => {
 
     const location = useLocation();
+
     const navigate = useNavigate();
 
     const search = new URLSearchParams(location.search);
 
-    const [blogs, setBlogs] = useState();
-    const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
+    const { blog,  alert } = useBlogDetails(title);
 
-    const [comments, setComments] = useState([]);
+    const {
+        comments,
+        submitComment,
+        loading: commentLoading,
+        alert: commentAlert
+    } = useComment(blog?.blog_id);
+
     const [userComment, setUserComment] = useState({ name: "", comment: "" });
-
-    useEffect(() => {
-        api.get(`/blog/?title=${search.get('title')}`)
-            .then((response) => {
-                setBlogs(response.data[0]);
-                console.log(response.data[0]);
-                if (response.data[0]?.blog_id) {
-                    api.get(`/comment/${response.data[0].blog_id}`)
-                        .then(res => setComments(res.data));
-                }
-                setAlert({ show: false, type: "", messages: [] });
-            })
-            .catch((err) => {
-
-                let messages = [];
-
-                if (Array.isArray(err.message)) {
-                    messages = err.message.map((errmsg) => errmsg.msg);
-                } else {
-                    messages = [err.message];
-                }
-
-                setAlert({
-                    show: true,
-                    type: "error",
-                    messages
-                });
-
-                setTimeout(() => {
-                    setAlert({ show: false, type: "", messages: [] });
-                }, 3000);
-
-            });
-
-    }, [location.search])
-
-    const submitComment = () => {
-        if (!userComment.name || !userComment.comment) return;
-
-        api.post("/comment/add", {
-            blog_id: blogs.blog_id,
-            name: userComment.name,
-            comment: userComment.comment
-        })
-            .then(() => {
-                setUserComment({ name: "", comment: "" });
-                api.get(`/comment/${blogs.blog_id}`)
-                    .then(res => setComments(res.data));
-            });
-    };
-
-
-    // console.log(blogs);
 
     return (
         <Stack alignItems={'center'} gap={'1rem'} sx={{ py: 2, px: 10 }}>
@@ -123,7 +78,7 @@ export const Blog = () => {
                 </Typography>
             )}
 
-            <Typography sx={{ fontWeight: '400', fontSize: '18px', lineHeight: 1.6, px: 10, py: 3 }} dangerouslySetInnerHTML={{ __html:  DOMPurify.sanitize(blogs?.content) }}></Typography>
+            <Typography sx={{ fontWeight: '400', fontSize: '18px', lineHeight: 1.6, px: 10, py: 3 }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blogs?.content) }}></Typography>
 
             {/* Sections */}
             {blogs?.sections?.map((sec) => (

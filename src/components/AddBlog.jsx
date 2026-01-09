@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
-import { blogSchema } from '../validation.js';
+import { blogSchema } from '../validation/validation.js';
 import { Alert } from '@mui/material';
 import { api } from '../api/api';
 import { Avatar } from '@mui/material';
@@ -17,8 +17,9 @@ import 'react-quill-new/dist/quill.snow.css';
 export default function Form() {
 
   const [form, setForm] = useState({}); // form data
+
   const [error, setError] = useState({}); // real time error
-  console.log(error);
+
   const [alert, setAlert] = useState({  // alert messages
     show: false,
     type: "",

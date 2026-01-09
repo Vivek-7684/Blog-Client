@@ -4,6 +4,7 @@ import { getCommentService } from "../services/comment.service";
 import { useAlert } from "./useAlert";
 
 export const useBlogDetails = (title) => {
+    
   const [blog, setBlog] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +25,7 @@ export const useBlogDetails = (title) => {
         setBlog(blogData);
 
         const commentRes = await getCommentService(blogData.blog_id);
-        
+
         setComments(commentRes.data);
 
       } catch (err) {

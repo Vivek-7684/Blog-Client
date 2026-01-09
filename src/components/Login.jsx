@@ -3,7 +3,7 @@ import TextFeid from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
-import { loginSchema } from '../validation';
+import { loginSchema } from '../validation/validation';
 import { api } from '../api/api';
 import { useLogin } from "../hooks/useLogin";
 import { useNavigate } from 'react-router-dom';
@@ -61,33 +61,13 @@ export default function Login() {
 
         e.preventDefault();
 
-        api.post("/login", form)
-            .then((res) => {
-                setAlert({ open: true, severity: "success", message: "Login Successful" });
+        const success = await login(form);
 
-                setTimeout(() => {
-                    setAlert({ open: false, severity: "", message: "" });
-                }, 3000);
-
-                setTimeout(() => {
-                    navigate("/admin/add-blog")
-                }, 2000);
-            })
-            .catch((err) => {
-                let messages = [];
-                if (Array.isArray(err.response?.data?.error)) {
-                    messages = err.response?.data?.error.map((msg) => msg);
-                }
-                else if (err.response?.data?.error) {
-                    messages.push(err.response?.data?.error);
-                }
-
-                setAlert({ open: true, severity: "error", message: messages });
-
-                setTimeout(() => {
-                    setAlert({ open: false, severity: "", message: "" });
-                }, 3000);
-            })
+        if (success) {
+            setTimeout(() => {
+                navigate("/admin/add-blog");
+            }, 3000)
+        }
     }
 
     return (

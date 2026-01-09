@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
-import { data } from "../data";
 import { useState } from 'react';
 
 const ViewBlog = () => {
