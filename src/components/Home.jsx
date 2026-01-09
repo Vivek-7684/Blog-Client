@@ -5,48 +5,18 @@ import Paper from '@mui/material/Paper';
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
-import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import DOMPurify from 'dompurify';
 import { api } from '../api/api';
+import { useBlogs } from "../hooks/useBlogs";
 
 export default function Home() {
 
-    const [blogs, setBlogs] = useState('');
-    const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
+    const { blogs, loading, alert } = useBlogs();
 
     const [loadmore, setLoadmore] = useState(5);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        api.get("blog")
-            .then((response) => {
-                setBlogs(response.data);
-                setAlert({ show: false, type: "", messages: [] });
-            })
-            .catch((err) => {
-
-                let messages = [];
-
-                if (Array.isArray(err.message)) {
-                    messages = err.message.map((errmsg) => errmsg.msg);
-                } else {
-                    messages = [err.message];
-                }
-
-                setAlert({
-                    show: true,
-                    type: "error",
-                    messages
-                });
-
-                setTimeout(() => {
-                    setAlert({ show: false, type: "", messages: [] });
-                }, 3000);
-
-            });
-    }, [])
 
     const getLoadMore = () => {
         setLoadmore(prev => Math.min(prev + 5, blogs.length));
@@ -56,14 +26,14 @@ export default function Home() {
 
         <Box sx={{ bgcolor: 'rgba(255, 255, 255, 1)', width: '100%', overflowX: 'hidden' }}>
 
-            {alert.show &&
+            {alert.open &&
                 (
                     <Alert
                         severity={alert.type}
                         sx={{ m: 2, width: "40vw", position: "fixed", zIndex: 20, top: '70', left: '50' }}
                         onClose={() => setAlert({ open: false, severity: "", messages: "" })}
                     >
-                        {alert.messages[0]}
+                        {alert.message}
                     </Alert>
                 )
             }

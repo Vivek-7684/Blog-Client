@@ -5,16 +5,16 @@ import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import { loginSchema } from '../validation';
 import { api } from '../api/api';
-import { useState } from 'react';
+import { useLogin } from "../hooks/useLogin";
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
 
     const [form, setForm] = useState({}); // form data
 
-    const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
-
     const [error, setError] = useState({});
+
+    const { login, loading, alert } = useLogin();
 
     const navigate = useNavigate();
 
