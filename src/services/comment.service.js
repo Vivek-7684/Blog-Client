@@ -1,7 +1,7 @@
 import { api } from "../api/api";
 
 export const getCommentService = (blogId) => {
-    return api.get(`/comment/${response.data[0].blog_id}`)
+    return api.get(`/comment/${blogId}`)
 }
 
 export const addCommentService = (comment) => {

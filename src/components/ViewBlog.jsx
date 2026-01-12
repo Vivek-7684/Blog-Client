@@ -8,8 +8,6 @@ import { useState } from 'react';
 
 const ViewBlog = () => {
 
-  const [blogs, setBlogs] = useState(data);
-
   const [loadmore, setLoadmore] = useState(5);
 
   const getLoadMore = () => {

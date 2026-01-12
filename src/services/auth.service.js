@@ -1,5 +1,5 @@
 import { api } from "../api/api";
 
 export const loginService = (data) => {
-    api.post('/login', data);
+   return api.post('/login', data);
 } 

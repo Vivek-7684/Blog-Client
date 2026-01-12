@@ -2,15 +2,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import { Avatar, Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import { useEffect, useState } from 'react';
-import { api } from '../api/api';
 import Alert from "@mui/material/Alert";
 import { TextField } from '@mui/material';
 import DOMPurify from 'dompurify';
-
+import { useState } from 'react';
 import { useBlogDetails } from '../hooks/useBlogDetails';
 import { useComment } from "../hooks/useComment";
-
 
 
 export const Blog = () => {
@@ -21,27 +18,31 @@ export const Blog = () => {
 
     const search = new URLSearchParams(location.search);
 
-    const { blog,  alert } = useBlogDetails(title);
+    const { blog, loading, alert: BlogAlert } = useBlogDetails(search.get('title'));
 
     const {
         comments,
         submitComment,
-        loading: commentLoading,
         alert: commentAlert
     } = useComment(blog?.blog_id);
 
-    const [userComment, setUserComment] = useState({ name: "", comment: "" });
+    const [userComment, setUserComment] = useState({
+        name: "",
+        comment: ""
+    });
+
+    const activeAlert = BlogAlert.open ? BlogAlert : commentAlert;
 
     return (
         <Stack alignItems={'center'} gap={'1rem'} sx={{ py: 2, px: 10 }}>
-            {alert.show &&
+            {activeAlert.open &&
                 (
                     <Alert
-                        severity={alert.type}
+                        severity={activeAlert.type}
                         sx={{ m: 2, width: "40vw", position: "fixed", zIndex: 20, top: '70', left: '50' }}
-                        onClose={() => setAlert({ open: false, severity: "", messages: "" })}
+                    // onClose={() => setAlert({ open: false, severity: "", messages: "" })}
                     >
-                        {alert.messages[0]}
+                        {activeAlert.message}
                     </Alert>
                 )
             }
@@ -49,39 +50,39 @@ export const Blog = () => {
                 <Button sx={{ fontWeight: 500, bgcolor: '#000040', color: 'white' }} onClick={() => navigate('/')}>Back</Button>
             </Stack>
 
-            {blogs?.created_at && (
+            {blog?.created_at && (
                 <Typography sx={{ fontSize: "14px", fontWeight: 500, textAlign: "center", color: "gray" }}>
-                    Published on — {blogs.created_at.slice(0, 10)}
+                    Published on — {blog.created_at.slice(0, 10)}
                 </Typography>
             )}
 
             {/* Views */}
-            {blogs?.views && <Typography sx={{ color: 'grey', fontSize: '16px', fontWeight: '700' }}>{blogs.views} views</Typography>}
+            {blog?.views && <Typography sx={{ color: 'grey', fontSize: '16px', fontWeight: '700' }}>{blog.views} views</Typography>}
 
-            <Typography sx={{ fontWeight: '700', fontSize: '42px', lineHeight: '1', textAlign: 'center' }}>{blogs?.title}</Typography>
+            <Typography sx={{ fontWeight: '700', fontSize: '42px', lineHeight: '1', textAlign: 'center' }}>{blog?.title}</Typography>
 
             {/* Summary */}
-            {blogs?.summary && (
+            {blog?.summary && (
                 <Typography sx={{ fontSize: "18px", fontWeight: 500, textAlign: "center" }}>
-                    {blogs.summary}
+                    {blog.summary}
                 </Typography>
             )}
 
             <Box sx={{ bgcolor: '#fca815ff', width: '90vw', height: '3px', my: 2, borderColor: 'none' }}></Box>
 
-            <Avatar alt="Blog" src={`http://localhost:3000/${blogs?.image_url.replace("\\", '/')}`} sx={{ width: '60%', height: 'auto' }} variant='square' />
+            <Avatar alt="Blog" src={`http://localhost:3000/${blog?.image_url.replace("\\", '/')}`} sx={{ width: '60%', height: 'auto' }} variant='square' />
 
             {/* Quote */}
-            {blogs?.quote && (
+            {blog?.quote && (
                 <Typography sx={{ mt: 2, fontSize: "22px", fontWeight: 600, color: "orange", textAlign: "center" }}>
-                    “ {blogs.quote} ”
+                    “ {blog.quote} ”
                 </Typography>
             )}
 
-            <Typography sx={{ fontWeight: '400', fontSize: '18px', lineHeight: 1.6, px: 10, py: 3 }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blogs?.content) }}></Typography>
+            <Typography sx={{ fontWeight: '400', fontSize: '18px', lineHeight: 1.6, px: 10, py: 3 }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog?.content) }}></Typography>
 
             {/* Sections */}
-            {blogs?.sections?.map((sec) => (
+            {blog?.sections?.map((sec) => (
                 <Box key={sec.section_id} sx={{ width: "80%", mt: 1 }}>
 
                     {/* Subtitle */}
@@ -111,7 +112,7 @@ export const Blog = () => {
             ))}
 
             {/* Author Section */}
-            {blogs?.author && (
+            {blog?.author && (
                 <Box
                     sx={{
                         width: "80%",
@@ -125,9 +126,9 @@ export const Blog = () => {
                     }}
                 >
                     {/* Author Image */}
-                    {blogs?.author_image && (
+                    {blog?.author_image && (
                         <Avatar
-                            src={`http://localhost:3000/${blogs.author_image.replace("\\", "/")}`}
+                            src={`http://localhost:3000/${blog.author_image.replace("\\", "/")}`}
                             sx={{ width: 100, height: 100 }}
                         />
                     )}
@@ -135,18 +136,18 @@ export const Blog = () => {
                     {/* Author Details */}
                     <Box>
                         <Typography sx={{ fontSize: "22px", fontWeight: 700 }}>
-                            {blogs.author}
+                            {blog.author}
                         </Typography>
 
-                        {blogs.occupation && (
+                        {blog.occupation && (
                             <Typography sx={{ fontSize: "16px", color: "gray" }}>
-                                {blogs.occupation}
+                                {blog.occupation}
                             </Typography>
                         )}
 
-                        {blogs.author_desc && (
+                        {blog.author_desc && (
                             <Typography sx={{ mt: 1, fontSize: "15px", lineHeight: 1.6 }}>
-                                {blogs.author_desc}
+                                {blog.author_desc}
                             </Typography>
                         )}
                     </Box>
@@ -155,14 +156,14 @@ export const Blog = () => {
 
 
             {/*  Related Posts Section */}
-            {blogs?.relatedPosts?.length > 0 && (
+            {blog?.relatedPosts?.length > 0 && (
                 <Box sx={{ width: "100%", my: 6 }}>
                     <Typography sx={{ fontSize: "28px", fontWeight: 700, mb: 4 }}>
                         Related Posts
                     </Typography>
 
                     <Stack direction="row" gap={3} flexWrap="wrap">
-                        {blogs.relatedPosts.map((post, index) => (
+                        {blog.relatedPosts.map((post, index) => (
                             <Box
                                 key={index}
                                 sx={{ width: "30%", cursor: "pointer" }}
@@ -216,7 +217,7 @@ export const Blog = () => {
                 <Button
                     variant="contained"
                     sx={{ mt: 2, bgcolor: 'orange' }}
-                    onClick={submitComment}
+                    onClick={async () => { await submitComment({ name: userComment.name, comment: userComment.comment }); setUserComment({ name: "", comment: "" }); }}
                 >
                     Post Comment
                 </Button>
@@ -242,9 +243,9 @@ export const Blog = () => {
 
 
             {/* Tags */}
-            {blogs?.tags && (
+            {blog?.tags && (
                 <Typography sx={{ mt: 1, fontSize: "14px", fontStyle: "Bold", fontWeight: '700', textAlign: "center" }}>
-                    Tags:-- {blogs.tags}
+                    Tags:-- {blog.tags}
                 </Typography>
             )}
 
@@ -252,18 +253,18 @@ export const Blog = () => {
             <Stack direction="row" justifyContent="space-between" sx={{ width: "100%", my: 6 }}>
 
                 {/* Previous Post */}
-                {blogs?.previousPost ? (
+                {blog?.previousPost ? (
                     <Stack direction="row" alignItems="center" sx={{ cursor: "pointer" }}
-                        onClick={() => navigate(`/blog?title=${blogs.previousPost.title}`)}
+                        onClick={() => navigate(`/blog?title=${blog.previousPost.title}`)}
                     >
                         <Avatar
-                            src={`http://localhost:3000/${blogs.previousPost.image_url}`}
+                            src={`http://localhost:3000/${blog.previousPost.image_url}`}
                             sx={{ width: "120px", height: "120px", mr: 2 }}
                             variant="square"
                         />
                         <Typography sx={{ fontSize: "18px", fontWeight: 600 }}>
                             Previous Post: <br />
-                            {blogs.previousPost.title}
+                            {blog.previousPost.title}
                         </Typography>
                     </Stack>
                 ) : (
@@ -271,16 +272,16 @@ export const Blog = () => {
                 )}
 
                 {/* Next Post */}
-                {blogs?.nextPost ? (
+                {blog?.nextPost ? (
                     <Stack direction="row" alignItems="center" sx={{ cursor: "pointer" }}
-                        onClick={() => navigate(`/blog?title=${blogs.nextPost.title}`)}
+                        onClick={() => navigate(`/blog?title=${blog.nextPost.title}`)}
                     >
                         <Typography sx={{ fontSize: "18px", fontWeight: 600, textAlign: "right", mr: 2 }}>
                             Next Post: <br />
-                            {blogs.nextPost.title}
+                            {blog.nextPost.title}
                         </Typography>
                         <Avatar
-                            src={`http://localhost:3000/${blogs.nextPost.image_url}`}
+                            src={`http://localhost:3000/${blog.nextPost.image_url}`}
                             sx={{ width: "120px", height: "120px", ml: 2 }}
                             variant="square"
                         />

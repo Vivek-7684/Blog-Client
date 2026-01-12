@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import { loginSchema } from '../validation/validation';
 import { api } from '../api/api';
+import { useState } from 'react';
 import { useLogin } from "../hooks/useLogin";
 import { useNavigate } from 'react-router-dom';
 
@@ -80,9 +81,8 @@ export default function Login() {
                 {alert.open &&
                     (
                         <Alert
-                            severity={alert.severity}
+                            severity={alert.type}
                             sx={{ m: 2, width: "40vw", position: "fixed", zIndex: 20, top: 70, left: '50' }}
-                            onClose={() => setAlert({ open: false, severity: "", messages: "" })}
                         >
                             {alert.message}
                         </Alert>

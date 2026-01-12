@@ -6,7 +6,6 @@ import { useAlert } from "./useAlert";
 export const useBlogDetails = (title) => {
     
   const [blog, setBlog] = useState(null);
-  const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const { alert, showAlert } = useAlert();
@@ -24,10 +23,6 @@ export const useBlogDetails = (title) => {
 
         setBlog(blogData);
 
-        const commentRes = await getCommentService(blogData.blog_id);
-
-        setComments(commentRes.data);
-
       } catch (err) {
         const message =
           err?.response?.data?.error ||
@@ -43,5 +38,5 @@ export const useBlogDetails = (title) => {
     fetchBlogDetails();
   }, [title]);
 
-  return { blog, comments, loading, alert };
+  return { blog, loading, alert };
 };

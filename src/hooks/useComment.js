@@ -16,7 +16,7 @@ export const useComment = (blogId) => {
         if (!blogId) return;
 
         try {
-            const res = await getCommentsService(blogId);
+            const res = await getCommentService(blogId);
             setComments(res.data);
         } catch (err) {
             showAlert(
@@ -39,6 +39,7 @@ export const useComment = (blogId) => {
         }
 
         setLoading(true);
+
         try {
             await addCommentService({
                 blog_id: blogId,
@@ -46,8 +47,9 @@ export const useComment = (blogId) => {
                 comment
             });
 
-            showAlert("success", "Comment added");
-            fetchComments(); // refresh list
+            showAlert("success", "Comment added ");
+
+            await fetchComments(); // refresh list
         } catch (err) {
             showAlert(
                 "error",

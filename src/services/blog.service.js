@@ -5,9 +5,9 @@ export const addblogService = (formData) => {
 }
 
 export const getSingleBlogService = (title) => {
-    return api.post(`/blog?title=${title}`);
+    return api.get(`/blog?title=${title}`);
 }
 
 export const getBlogsService = () => {
-    return api.post('/blog');
+    return api.get('/blog');
 }
