@@ -1,0 +1,703 @@
+import TextField from '@mui/material/TextField';
+import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import { useNavigate } from 'react-router-dom';
+import { blogSchema } from '../validation/validation.js';
+import { Alert } from '@mui/material';
+import { api } from '../api/api.js';
+import { Avatar } from '@mui/material';
+import { Stack } from '@mui/material';
+import { useRef } from "react";
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+
+
+export default function Form() {
+
+  type AlertType = "success" | "error" | "info" | "warning";
+
+  interface AlertState {
+    show: boolean;
+    type: AlertType;
+    messages: string[];
+  }
+
+  interface BlogForm {
+    title?: string;
+    content?: string;
+    image?:null;
+    [key: string]: any;
+  }
+
+  type ErrorState = Record<string, string[] | null>;
+
+  interface Section {
+    subTitle: string;
+    content: string;
+    image: null;
+    preview: string;
+    error: string | null;
+    inputKey: number;
+  }
+
+  
+  
+    const [form, setForm] = useState<BlogForm>({});
+    const [error, setError] = useState<ErrorState>({});
+
+    const [alert, setAlert] = useState<AlertState>({
+      show: false,
+      type: "info",
+      messages: []
+    });
+
+    const [image, setImage] = useState<string>("");
+
+    const [sections, setSections] = useState<Section[]>([]);
+
+    const fileRef = useRef<HTMLInputElement | null>(null);
+
+    const addSection = () => {
+      setSections([
+        ...sections,
+        { subTitle: "", content: "", image: null, preview: "", error: null, inputKey: Date.now() }
+      ]);
+    };
+
+    const removeSection = (index:number) => {
+      setSections(sections.filter((_, idx) => index != idx));
+    }
+
+    const handleSectionChange = (index:number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+
+      setSections((prev) => {
+        const updatedSections = [...prev];
+        updatedSections[index] = {
+          ...updatedSections[index],
+          [name]: value
+        }
+        return updatedSections;
+      });
+    };
+
+    const handleSectionImageUpload = (index:number, e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+
+      // User ne file hata di
+      if (!file) {
+        setSections((prev) => {
+          const updated = [...prev];
+          updated[index] = {
+            ...updated[index],
+            image: null,
+            preview: "",
+            error: "Section image is required"
+          };
+          return updated;
+        });
+        return;
+      }
+
+      // Wrong format (e.g. .avif, .svg, .gif, etc.)
+      if (!allowedTypes.includes(file.type)) {
+        setSections((prev) => {
+          const updated = [...prev];
+          updated[index] = {
+            ...updated[index],
+            image: null,
+            preview: "",
+            error: "Only JPG, JPEG and WEBP images are allowed"
+          };
+          return updated;
+        });
+
+        e.target.value = ""; // input reset
+        return;
+      }
+
+      // Valid image
+      const previewImage = URL.createObjectURL(file);
+
+      setSections((prev) => {
+        const updated = [...prev];
+        updated[index] = {
+          ...updated[index],
+          image: file,
+          preview: previewImage,
+          error: null
+        };
+        return updated;
+      });
+    };
+
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+      // validation only when user type data 
+      if (e.target.value.trimStart() === "") {
+        e.target.value = "";
+      }
+
+      if (e.target.value.trim() === "") {
+        setForm({ ...form, [e.target.name]: "" });
+
+        const newErrors = { ...error };
+        delete newErrors[e.target.name]; //remove only that field error
+        setError(newErrors);
+
+        return; //  no validation for empty 
+      }
+
+      const updatedFields = { ...form, [e.target.name]: e.target.value };
+
+      setForm(updatedFields);
+
+      const result = blogSchema.safeParse(updatedFields);
+
+      if (!result.success) {
+        setError(result.error.flatten().fieldErrors);
+      } else {
+        setError({});
+      }
+    };
+
+    const AddBlog = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+      e.preventDefault();
+
+      if (!form.title || !form.content || !form.image) {
+        setAlert({
+          show: true,
+          type: "error",
+          messages: ["All Fields are Required."]
+        })
+        setTimeout(() => {
+          setAlert({
+            show: false,
+            type: "info",
+            messages: []
+          })
+        }, 2000);
+        return false;
+      }
+
+      const fd = new FormData();
+
+      for (let key in form) fd.append(key, form[key]);
+
+      const sectionsServer = sections.map((sec) => ({
+        subTitle: sec.subTitle,
+        content: sec.content
+      }))
+
+      fd.append("sections", JSON.stringify(sectionsServer));
+
+      sections.forEach((sec) => {
+        if (sec.image) {
+          fd.append(`sectionImages`, sec.image);
+        }
+      });
+
+      api.post("/addBlog", fd)
+        .then(() => {
+          setImage('');
+
+          setSections([]);
+
+          setAlert({
+            show: true,
+            type: "success",
+            messages: ["Blog added successfully"]
+          });
+
+          setTimeout(() => {
+            setAlert({ show: false, type: "info", messages: [] });
+          }, 3000);
+
+          setForm({});
+          if (fileRef.current) {
+            fileRef.current.value = "";
+          }
+        })
+        .catch((err) => {
+
+          let messages = [];
+
+          if (Array.isArray(err.response.data)) {
+            messages = err.response.data.map((errmsg: any) => errmsg.msg);
+          } else {
+            messages = [err.response.data.error];
+          }
+
+          setAlert({
+            show: true,
+            type: "error",
+            messages
+          });
+
+          setTimeout(() => {
+            setAlert({ show: false, type: "info", messages: [] });
+          }, 3000);
+
+        });
+    };
+
+    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];   // ✅ optional chaining
+      const name = e.target.name as keyof BlogForm;
+
+      const allowedFiles = ["image/png", "image/jpeg", "image/webp"];
+
+      // ❌ user removed file
+      if (!file) {
+        setImage("");
+        setError(prev => ({
+          ...prev,
+          [name]: ["Image is required"]
+        }));
+        setForm(prev => ({
+          ...prev,
+          [name]: ""
+        }));
+        return;
+      }
+
+      // ❌ wrong file type
+      if (!allowedFiles.includes(file.type)) {
+        setError(prev => ({
+          ...prev,
+          image: ["Only JPG, WEBP and JPEG files are allowed."]
+        }));
+        return;
+      }
+
+      // ✅ clear image error
+      setError(prev => ({
+        ...prev,
+        image: null
+      }));
+
+      // ✅ store file + preview
+      setForm(prev => ({
+        ...prev,
+        [name]: file
+      }));
+      setImage(URL.createObjectURL(file));
+
+      // ✅ remove error key completely
+      setError(prev => {
+        const updated = { ...prev };
+        delete updated[name];
+        return updated;
+      });
+    };
+
+    const removeMainImage = () => {
+      setImage('');
+      setForm({ ...form, image: null });
+      if (fileRef.current) {
+        fileRef.current.value = "";
+      }
+
+      setError((prev) => ({ ...prev, image: ['image is required'] }));
+    }
+
+    const removeSectionImage = (index: number) => {
+      setSections(prev => {
+        const updated = [...prev];
+
+        updated[index] = {
+          ...updated[index],
+          image: null,
+          preview: '',
+          inputKey: Date.now()
+        }
+        return updated;
+      })
+    }
+
+    const handleContent = (value: string) => {
+      setForm(prev => ({
+        ...prev,
+        content: value
+      }));
+    };
+
+    return (
+      <>
+
+        <Box sx={{ width: '40vw', height: '80vh', px: 2, display: 'flex', flexDirection: 'row', gap: '1rem' }}>
+          {alert.show &&
+            alert.messages.map((msg, idx) => (
+              <Alert
+                key={idx}
+                severity={alert.type}
+                sx={{ m: 2, width: "40vw", position: "absolute", top: 55, left: '70' }}
+                onClose={() => setAlert({ show: false, type: "info", messages: [] })}
+              >
+                {msg}
+              </Alert>
+            ))
+          }
+          <form style={{ height: '80vh' }}>
+            <Typography variant='h5'>Blogs </Typography>
+
+            <TextField
+              error={error?.title}
+              helperText={error?.title?.join(".")}
+              value={form?.title || ""}
+              label="Title"
+              name="title"
+              margin="normal"
+              onChange={handleChange}
+              variant='outlined'
+              fullWidth
+            />
+
+            {/* <TextField
+            error={error?.content}
+            helperText={error?.content?.join(".")}
+            value={form?.content || ""}
+            label="Content"
+            name="content"
+            margin="normal"
+            onChange={handleChange}
+            variant='outlined'
+            rows={6}
+            multiline
+            fullWidth
+          /> */}
+
+            <ReactQuill
+              value={form?.content || ""}
+              onChange={handleContent}
+              theme="snow"
+            />
+
+            <TextField
+              label="Tags"
+              name="tags"
+              error={error?.tags}
+              margin='normal'
+              fullWidth
+              value={form?.tags || ""}
+              helperText={"Examples:- Reactjs, Nodejs, CPP"}
+              onChange={handleChange}
+            />
+
+            <TextField
+              label="Summary"
+              name="summary"
+              error={error?.summary}
+              margin='normal'
+              fullWidth
+              value={form?.summary || ""}
+              onChange={handleChange}
+            />
+
+            <TextField
+              label="Quote"
+              name="quote"
+              error={error?.quote}
+              margin='normal'
+              fullWidth
+              value={form?.quote || ""}
+              onChange={handleChange}
+            />
+
+            <TextField
+              error={error?.image}
+              accept="image/png,image/jpeg,image/webp"
+              helperText={error?.image?.join(".")}
+              onChange={handleUpload}
+              name="image"
+              margin="normal"
+              variant='outlined'
+              rows={6}
+              type="file"
+              fullWidth
+              inputRef={fileRef}
+            />
+
+            {Image && (
+              <Box
+                sx={{
+                  position: "relative",
+                  width: 250,
+                  height: 250,
+                  mt: 2,
+                  "&:hover .delete-icon": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                <img
+                  src={Image}
+                  width="250"
+                  height="250"
+                  style={{ objectFit: "cover", borderRadius: "8px" }}
+                />
+
+                <Box
+                  className="delete-icon"
+                  onClick={removeMainImage}
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    bgcolor: "rgba(0,0,0,0.6)",
+                    color: "white",
+                    borderRadius: "50%",
+                    width: 32,
+                    height: 32,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    opacity: 0,
+                    transition: "0.3s",
+                  }}
+                >
+                  ❌
+                </Box>
+              </Box>
+            )}
+
+
+            <Typography variant='h6' sx={{ mt: 3 }}>Sections</Typography>
+
+            {sections.map((section, idx) =>
+            (
+              <Box
+                key={idx}
+                sx={{
+                  border: "1px solid #ddd",
+                  borderRadius: 2,
+                  p: 2,
+                  mb: 2,
+                }}
+              >
+                <Typography variant="subtitle1">
+                  Section {idx + 1}
+                </Typography>
+
+                <TextField
+                  // error={error?.title}
+                  // helperText={error?.title?.join(".")}
+                  value={section?.subTitle || ""}
+                  label="Sub Title"
+                  name="subTitle"
+                  margin="normal"
+                  onChange={(e) => handleSectionChange(idx, e)}
+                  variant='outlined'
+                  fullWidth
+                />
+
+                <TextField
+                  // error={error?.content}
+                  // helperText={error?.content?.join(".")}
+                  value={section?.content || ""}
+                  label="Content"
+                  name="content"
+                  margin="normal"
+                  onChange={(e) => handleSectionChange(idx, e)}
+                  variant='outlined'
+                  rows={6}
+                  multiline
+                  fullWidth
+                />
+
+                <TextField
+                  key={section.inputKey}
+                  type="file"
+                  name="sectionImages"
+                  margin="normal"
+                  fullWidth
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={(e) => handleSectionImageUpload(idx, e)}
+                />
+
+                {section.error && (
+                  <Typography sx={{ fontSize: "14px", color: "red", mt: 1 }}>
+                    {section.error}
+                  </Typography>
+                )}
+
+                {section.preview && (
+                  <Box
+                    sx={{
+                      position: "relative",
+                      width: 200,
+                      height: 200,
+                      mt: 1,
+                      "&:hover .delete-icon": {
+                        opacity: 1,
+                      },
+                    }}
+                  >
+                    <img
+                      src={section.preview}
+                      width="200"
+                      height="200"
+                      style={{ objectFit: "cover", borderRadius: "8px" }}
+                    />
+
+                    <Box
+                      className="delete-icon"
+                      onClick={() => removeSectionImage(idx)}
+                      sx={{
+                        position: "absolute",
+                        top: 6,
+                        right: 6,
+                        bgcolor: "rgba(0,0,0,0.6)",
+                        color: "white",
+                        borderRadius: "50%",
+                        width: 30,
+                        height: 30,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        opacity: 0,
+                        transition: "0.3s",
+                      }}
+                    >
+                      ❌
+                    </Box>
+                  </Box>
+                )}
+
+                <Button
+                  sx={{ mt: 1 }}
+                  variant="text"
+                  color="error"
+                  onClick={() => removeSection(idx)}
+                >
+                  Remove Section
+                </Button>
+
+              </Box>
+            )
+            )}
+
+            <Button sx={{ mt: 1, mb: 2 }} variant='outlined' onClick={addSection}>Add Section</Button>
+
+            <Typography variant='h6' sx={{ mt: 3, mb: 3 }}>Author Details</Typography>
+
+            <Box
+              sx={{
+                border: "1px solid #ddd",
+                borderRadius: 2,
+                p: 2,
+                mb: 2,
+              }}
+            >
+              <TextField
+                label="Author"
+                name="author"
+                margin='normal'
+                fullWidth
+                value={form?.author || ""}
+                onChange={handleChange}
+              />
+
+              <TextField
+                label="Occupation"
+                name="occupation"
+                margin='normal'
+                fullWidth
+                value={form?.occupation || ""}
+                onChange={handleChange}
+              />
+
+              <TextField
+                label="Short Description"
+                name="author_desc"
+                fullWidth
+                margin='normal'
+                value={form?.author_desc || ""}
+                onChange={handleChange}
+              />
+
+              <TextField
+                type="file"
+                name="author_image"
+                margin='normal'
+                accept="image/png,image/jpeg,image/webp"
+                inputRef={authorImageRef}
+                onChange={(e) => {
+                  const file = e.target.files[0];
+
+                  if (!file) return;
+
+                  setForm({ ...form, author_image: file });
+                  setAuthImage(URL.createObjectURL(file));
+                }}
+                fullWidth />
+
+              {authImage && (
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: 150,
+                    height: 150,
+                    mt: 2,
+                    "&:hover .delete-icon": {
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  <img
+                    src={authImage}
+                    width="150"
+                    height="150"
+                    style={{
+                      objectFit: "cover",
+                      borderRadius: "50%", // profile look
+                    }}
+                  />
+
+                  <Box
+                    className="delete-icon"
+                    onClick={() => {
+                      setAuthImage("");
+                      setForm({ ...form, author_image: "" });
+                      authorImageRef.current.value = "";
+                    }}
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      bgcolor: "rgba(0,0,0,0.6)",
+                      color: "white",
+                      borderRadius: "50%",
+                      width: '100%',
+                      height: '100%',
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      opacity: 0,
+                      transition: "0.3s",
+                    }}
+                  >
+                    ❌
+                  </Box>
+                </Box>
+              )}
+
+            </Box>
+
+            <Button disabled={Object.keys(error).length > 0}
+              fullWidth sx={{ p: 2, my: 3, color: 'white', bgcolor: 'orange', fontSize: '16px', fontWeight: '700' }}
+              variant='contained'
+              onClick={(e) => AddBlog()}>Add Blog</Button>
+          </form>
+        </Box>
+      </>
+    );
+  }

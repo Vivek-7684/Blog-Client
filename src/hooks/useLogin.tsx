@@ -2,24 +2,27 @@ import { useState } from "react";
 import { loginService } from "../services/auth.service";
 import { useAlert } from "./useAlert";
 
-export const useLogin = () => {
-  const [loading, setLoading] = useState(false);
+interface LoginForm {
+  email: string;
+  password: string;
+}
 
+export const useLogin = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const { alert, showAlert } = useAlert();
 
-  const login = async (form) => {
+  const login = async (form: LoginForm): Promise<boolean> => {
     setLoading(true);
 
     try {
       await loginService(form);
       showAlert("success", "Login successful");
-      return true; // success flag
-    } catch (err) {
-      const message =
-        err?.response?.data?.error ||
-        "Invalid email or password";
-
-      showAlert("error", message);
+      return true;
+    } catch (err: any) {
+      showAlert(
+        "error",
+        err?.response?.data?.error || "Invalid email or password"
+      );
       return false;
     } finally {
       setLoading(false);

@@ -1,12 +1,12 @@
-import Login from './components/Login.jsx';
-import Home from './components/Home.jsx';
+import Login from './components/Login.js';
+import Home from './components/Home.js';
 import { GlobalStyles } from '@mui/material';
-import Layout from './components/layout/layout.jsx';
+import Layout from './components/layout/layout.js';
 import { Routes, Route } from 'react-router-dom';
-import AddBlog from './components/AddBlog.jsx';
-import ViewBlog from './components/ViewBlog.jsx';
-import AdminPanel from './components/AdminPanel.jsx';
-import { Blog } from './components/Blog.jsx';
+import AddBlog from './components/AddBlog.js';
+import ViewBlog from './components/ViewBlog.js';
+import AdminPanel from './components/AdminPanel.js';
+import Blog  from './components/Blog.js';
 
 export default function App() {
     return (
