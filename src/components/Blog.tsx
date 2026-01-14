@@ -177,6 +177,43 @@ const Blog: React.FC = () => {
         </Box>
       )}
 
+      {/*  Related Posts Section */}
+      {blog?.relatedPosts && blog?.relatedPosts?.length > 0 && (
+        <Box sx={{ width: "100%", my: 6 }}>
+          <Typography sx={{ fontSize: "28px", fontWeight: 700, mb: 4 }}>
+            Related Posts
+          </Typography>
+
+          <Stack direction="row" gap={3} flexWrap="wrap">
+            {blog?.relatedPosts.map((post, index) => (
+              <Box
+                key={index}
+                sx={{ width: "30%", cursor: "pointer" }}
+                onClick={() => navigate(`/blog?title=${post.title}`)}
+              >
+                <Avatar
+                  src={
+                    post.image_url
+                      ? `http://localhost:3000/${post.image_url.replace("\\", "/")}`
+                      : ""
+                  }
+                  variant="square"
+                  sx={{
+                    width: "100%",
+                    height: "230px",
+                    borderRadius: 2,
+                    "& img": { objectFit: "cover" }
+                  }}
+                />
+                <Typography sx={{ fontWeight: 700, fontSize: "18px", mt: 2 }}>
+                  {post.title}
+                </Typography>
+              </Box>
+            ))}
+          </Stack>
+        </Box>
+      )}
+
       {/* ===================== COMMENTS ===================== */}
       <Box sx={{ width: "80%", mt: 6 }}>
         <Typography sx={{ fontSize: 24, fontWeight: 700 }}>
@@ -243,6 +280,50 @@ const Blog: React.FC = () => {
           Tags: {blog.tags}
         </Typography>
       )}
+
+      {/* Previous & Next Posts */}
+      <Stack direction="row" justifyContent="space-between" sx={{ width: "100%", my: 6 }}>
+
+        {/* Previous Post */}
+        {blog?.previousPost ? (
+          <Stack direction="row" alignItems="center" sx={{ cursor: "pointer" }}
+            onClick={() => navigate(`/blog?title=${blog?.previousPost?.title}`)}
+          >
+            <Avatar
+              src={`http://localhost:3000/${blog.previousPost.image_url}`}
+              sx={{ width: "120px", height: "120px", mr: 2 }}
+              variant="square"
+            />
+            <Typography sx={{ fontSize: "18px", fontWeight: 600 }}>
+              Previous Post: <br />
+              {blog.previousPost.title}
+            </Typography>
+          </Stack>
+        ) : (
+          <Box sx={{ width: "120px" }}></Box>
+        )}
+
+        {/* Next Post */}
+        {blog?.nextPost ? (
+          <Stack direction="row" alignItems="center" sx={{ cursor: "pointer" }}
+            onClick={() => navigate(`/blog?title=${blog?.nextPost?.title}`)}
+          >
+            <Typography sx={{ fontSize: "18px", fontWeight: 600, textAlign: "right", mr: 2 }}>
+              Next Post: <br />
+              {blog.nextPost.title}
+            </Typography>
+            <Avatar
+              src={`http://localhost:3000/${blog.nextPost.image_url}`}
+              sx={{ width: "120px", height: "120px", ml: 2 }}
+              variant="square"
+            />
+          </Stack>
+        ) : (
+          <Box sx={{ width: "120px" }}></Box>
+        )}
+
+      </Stack>
+
     </Stack>
   );
 };
